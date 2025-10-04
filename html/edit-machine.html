@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AssetManager - Editar Máquina</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Editar Máquina</h1>
+        <form id="edit-machine-form">
+            <input type="hidden" id="machine-id">
+            <input type="text" id="machine-name" placeholder="Nome da Máquina" required>
+            <input type="text" id="machine-model" placeholder="Modelo" required>
+            <input type="text" id="serial-number" placeholder="Número de Série" required>
+            <textarea id="machine-description" placeholder="Descrição/Observações"></textarea>
+            <button type="submit">Salvar Alterações</button>
+        </form>
+        <div id="message"></div>
+        <p><a href="dashboard.html">Voltar para o Dashboard</a></p>
+    </div>
+    <script src="../js/dashboard.js"></script>
+</body>
+</html>
