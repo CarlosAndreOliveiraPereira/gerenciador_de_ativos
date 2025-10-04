@@ -1,20 +1,47 @@
 <?php
+header('Content-Type: application/json');
 require_once '../middleware/auth_check.php';
 require_once '../config/database.php';
 
-header('Content-Type: application/json');
+$data = json_decode(file_get_contents('php://input'));
 
-$data = json_decode(file_get_contents('php://input'), true);
+if (empty($data->id)) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'ID da máquina não fornecido.']);
+    exit;
+}
+
 $user_id = $_SESSION['user_id'];
-$machine_id = $data['id'] ?? 0;
+$machine_id = $data->id;
 
-// A verificação 'user_id' garante que um usuário não apague a máquina de outro
-$stmt = $pdo->prepare("DELETE FROM machines WHERE id = ? AND user_id = ?");
-$stmt->execute([$machine_id, $user_id]);
+try {
+    // Verifica se a máquina pertence ao usuário logado
+    $check_query = "SELECT user_id FROM machines WHERE id = :id";
+    $check_stmt = $pdo->prepare($check_query);
+    $check_stmt->bindParam(':id', $machine_id, PDO::PARAM_INT);
+    $check_stmt->execute();
+    $machine = $check_stmt->fetch(PDO::FETCH_ASSOC);
 
-if ($stmt->rowCount() > 0) {
-    echo json_encode(['success' => true, 'message' => 'Máquina excluída com sucesso!']);
-} else {
-    echo json_encode(['success' => false, 'message' => 'Máquina não encontrada ou você não tem permissão.']);
+    if (!$machine || $machine['user_id'] != $user_id) {
+        http_response_code(403); // Forbidden
+        echo json_encode(['success' => false, 'message' => 'Você não tem permissão para excluir esta máquina.']);
+        exit;
+    }
+
+    // Se a verificação passar, exclui a máquina
+    $delete_query = "DELETE FROM machines WHERE id = :id";
+    $delete_stmt = $pdo->prepare($delete_query);
+    $delete_stmt->bindParam(':id', $machine_id, PDO::PARAM_INT);
+
+    if ($delete_stmt->execute()) {
+        echo json_encode(['success' => true, 'message' => 'Máquina excluída com sucesso!']);
+    } else {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'message' => 'Não foi possível excluir a máquina.']);
+    }
+
+} catch (PDOException $e) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Erro no servidor: ' . $e->getMessage()]);
 }
 ?>
