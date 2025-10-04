@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AssetManager - Login</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div id="login-form-container">
+            <h1>Login</h1>
+            <form id="login-form">
+                <input type="email" id="login-email" placeholder="E-mail" required>
+                <input type="password" id="login-password" placeholder="Senha" required>
+                <button type="submit">Entrar</button>
+            </form>
+            <p class="toggle-link" onclick="toggleForms()">Não tem uma conta? Cadastre-se</p>
+        </div>
+
+        <div id="register-form-container" style="display: none;">
+            <h1>Cadastro</h1>
+            <form id="register-form">
+                <input type="text" id="register-name" placeholder="Nome Completo" required>
+                <input type="email" id="register-email" placeholder="E-mail" required>
+                <input type="password" id="register-password" placeholder="Senha" required>
+                <button type="submit">Cadastrar</button>
+            </form>
+            <p class="toggle-link" onclick="toggleForms()">Já tem uma conta? Faça Login</p>
+        </div>
+
+        <div id="message"></div>
+    </div>
+    <script src="./js/main.js"></script>
+</body>
+</html>

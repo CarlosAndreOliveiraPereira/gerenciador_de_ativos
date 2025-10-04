@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - AssetManager</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container dashboard-container">
+        <div class="header">
+            <h1 id="welcome-message">Bem-vindo!</h1>
+            <button id="logout-btn">Sair</button>
+        </div>
+
+        <h2>Adicionar Nova Máquina</h2>
+        <form id="add-machine-form">
+            <input type="text" id="machine-name" placeholder="Nome da Máquina (ex: Notebook Dell)" required>
+            <select id="machine-type" required>
+                <option value="">Selecione o tipo</option>
+                <option value="Notebook">Notebook</option>
+                <option value="Desktop">Desktop</option>
+                <option value="Televisão">Televisão</option>
+                <option value="Mini PC">Mini PC</option>
+                <option value="Outro">Outro</option>
+            </select>
+            <input type="text" id="machine-model" placeholder="Modelo (ex: XPS 15)">
+            <input type="text" id="machine-serial" placeholder="Número de Série">
+            <button type="submit">Adicionar</button>
+        </form>
+
+        <hr style="margin: 2rem 0;">
+
+        <h2>Minhas Máquinas</h2>
+        <div id="machines-list">
+            </div>
+    </div>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
