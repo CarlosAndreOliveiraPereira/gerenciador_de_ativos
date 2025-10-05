@@ -1,0 +1,36 @@
+/* === Confirmation Page Specific Styles === */
+.container {
+    max-width: 500px;
+}
+
+#confirmation-details {
+    background-color: var(--background-dark);
+    border-left: 4px solid var(--primary-yellow);
+    padding: 1.5rem;
+    margin: 2rem 0;
+    border-radius: 4px;
+}
+
+#confirmation-details p {
+    margin: 0.5rem 0;
+    font-size: 1.1rem;
+}
+
+#confirmation-details strong {
+    color: var(--primary-yellow);
+}
+
+.confirmation-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.btn-secondary {
+    background-color: #494a4b; /* A dark gray that fits the theme */
+    color: var(--text-light);
+}
+
+.btn-secondary:hover {
+    background-color: #5a5b5c;
+}

@@ -1,0 +1,9 @@
+/* === Login Page Specific Styles === */
+.container {
+    max-width: 450px;
+}
+
+p {
+    text-align: center;
+    margin-top: 1.5rem;
+}
