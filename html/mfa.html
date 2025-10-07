@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AssetManager - Verificação de Login</title>
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/login.css"> <!-- Reutilizando o CSS do login -->
+</head>
+<body>
+    <div class="container">
+        <h1>Verificação de Segurança</h1>
+        <p>Enviamos um código de 6 dígitos para o seu e-mail. Por favor, insira-o abaixo.</p>
+        <form id="mfa-form">
+            <input type="text" id="mfa-code" placeholder="Código de 6 dígitos" required maxlength="6" pattern="[0-9]{6}">
+            <button type="submit">Verificar Código</button>
+        </form>
+        <div id="message"></div>
+    </div>
+    <script src="../js/utils.js"></script>
+    <script src="../js/mfa.js"></script>
+</body>
+</html>

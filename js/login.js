@@ -15,9 +15,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 const result = await response.json();
 
-                if (result.success) {
+                // A chave para o novo fluxo de MFA
+                if (result.success && result.mfa_required) {
+                    // Exibe a mensagem (que contém o código para teste)
+                    showMessage(result.message, true);
+                    // Redireciona para a página de verificação de MFA
+                    setTimeout(() => {
+                        window.location.href = 'mfa.html';
+                    }, 2000);
+                } else if (result.success) {
+                    // Fallback para o caso de o MFA não ser acionado (não deve acontecer)
                     window.location.href = 'dashboard.html';
-                } else {
+                }
+                else {
                     showMessage(result.message, false);
                 }
             } catch (error) {

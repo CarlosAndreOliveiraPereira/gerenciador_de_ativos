@@ -1,14 +1,21 @@
 document.addEventListener('DOMContentLoaded', () => {
     const machineList = document.getElementById('machine-list')?.querySelector('tbody');
     const logoutButton = document.getElementById('logout-button');
+    const searchInput = document.getElementById('search-input');
+    const searchButton = document.getElementById('search-button');
     const API_BASE_URL = '../api/machines/';
 
-    // Fetches and displays the list of machines
-    const loadMachines = async () => {
+    // Fetches and displays the list of machines, with an optional search term
+    const loadMachines = async (searchTerm = '') => {
         if (!machineList) return;
 
+        let fetchUrl = API_BASE_URL + 'read.php';
+        if (searchTerm) {
+            fetchUrl += `?search=${encodeURIComponent(searchTerm)}`;
+        }
+
         try {
-            const response = await fetch(API_BASE_URL + 'read.php');
+            const response = await fetch(fetchUrl);
             if (response.status === 403) { // Not authorized
                 window.location.href = 'login.html';
                 return;
@@ -20,9 +27,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 result.machines.forEach(machine => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${machine.name}</td>
-                        <td>${machine.model}</td>
-                        <td>${machine.serial_number}</td>
+                        <td>${machine.localidade || '-'}</td>
+                        <td>${machine.nome_dispositivo || '-'}</td>
+                        <td>${machine.responsavel || '-'}</td>
+                        <td>${machine.setor || '-'}</td>
+                        <td>${machine.numero_serie || '-'}</td>
                         <td class="actions">
                             <a href="edit-machine.html?id=${machine.id}" class="btn btn-edit">Editar</a>
                             <button class="btn btn-delete" data-id="${machine.id}">Excluir</button>
@@ -33,12 +42,27 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (!result.success) {
                 showMessage(result.message, false);
             } else {
-                machineList.innerHTML = '<tr><td colspan="4">Nenhuma máquina cadastrada.</td></tr>';
+                machineList.innerHTML = `<tr><td colspan="6">Nenhuma máquina encontrada.</td></tr>`;
             }
         } catch (error) {
             showMessage('Erro ao carregar a lista de máquinas.', false);
         }
     };
+
+    // Handles search logic
+    if (searchButton && searchInput) {
+        const performSearch = () => {
+            const searchTerm = searchInput.value.trim();
+            loadMachines(searchTerm);
+        };
+
+        searchButton.addEventListener('click', performSearch);
+        searchInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+    }
 
     // Handles machine deletion
     if (machineList) {
@@ -55,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const result = await response.json();
                         showMessage(result.message, result.success);
                         if (result.success) {
-                            loadMachines(); // Reload the list after deletion
+                            loadMachines(searchInput.value.trim()); // Reload the list respecting the current search
                         }
                     } catch (error) {
                         showMessage('Ocorreu um erro de conexão. Tente novamente.', false);

@@ -1,17 +1,12 @@
--- AssetManager - Database Setup Script
--- Este script cria o banco de dados e as tabelas necessárias para a aplicação.
+-- AssetManager - Database Setup Script v2
+-- Este script cria o banco de dados e as tabelas com a nova estrutura de máquinas.
 
 -- --------------------------------------------------------
 --
 -- Criação do Banco de Dados
 --
--- Remove o banco de dados antigo se ele existir, para uma instalação limpa.
 DROP DATABASE IF EXISTS `asset_manager`;
-
--- Cria o novo banco de dados com codificação UTF-8 para suportar caracteres especiais.
 CREATE DATABASE `asset_manager` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- Seleciona o banco de dados para usar nas próximas operações.
 USE `asset_manager`;
 
 -- --------------------------------------------------------
@@ -19,12 +14,15 @@ USE `asset_manager`;
 --
 -- Estrutura da tabela `users`
 -- Armazena as informações dos usuários do sistema.
+-- A tabela agora inclui campos para o Multi-Factor Authentication (MFA).
 --
 CREATE TABLE `users` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL,
   `email` VARCHAR(255) NOT NULL,
   `password_hash` VARCHAR(255) NOT NULL,
+  `mfa_code` VARCHAR(6) DEFAULT NULL,
+  `mfa_code_expires_at` DATETIME DEFAULT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
@@ -33,16 +31,22 @@ CREATE TABLE `users` (
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `machines`
--- Armazena as informações das máquinas cadastradas, com vínculo ao usuário.
+-- Estrutura da tabela `machines` (NOVA VERSÃO)
+-- Armazena as informações das máquinas com os novos campos solicitados.
 --
 CREATE TABLE `machines` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `user_id` INT(11) NOT NULL,
-  `name` VARCHAR(255) NOT NULL,
-  `model` VARCHAR(255) NOT NULL,
-  `serial_number` VARCHAR(255) NOT NULL,
-  `description` TEXT DEFAULT NULL,
+  `localidade` VARCHAR(255) DEFAULT NULL,
+  `nome_dispositivo` VARCHAR(255) DEFAULT NULL,
+  `numero_serie` VARCHAR(255) DEFAULT NULL,
+  `nota_fiscal` VARCHAR(255) DEFAULT NULL,
+  `responsavel` VARCHAR(255) DEFAULT NULL,
+  `email_responsavel` VARCHAR(255) DEFAULT NULL,
+  `setor` VARCHAR(255) DEFAULT NULL,
+  `windows_update_ativo` VARCHAR(3) DEFAULT NULL, -- 'Sim' ou 'Não'
+  `sistema_operacional` VARCHAR(255) DEFAULT NULL,
+  `observacao` TEXT DEFAULT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
