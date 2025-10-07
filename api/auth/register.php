@@ -3,27 +3,55 @@ require_once '../config/database.php';
 
 header('Content-Type: application/json');
 
-$data = json_decode(file_get_contents('php://input'), true);
-
-if (empty($data['name']) || empty($data['email']) || empty($data['password'])) {
-    echo json_encode(['success' => false, 'message' => 'Todos os campos são obrigatórios.']);
+// Função para enviar resposta JSON e sair
+function send_json_response($success, $message, $statusCode = 200) {
+    http_response_code($statusCode);
+    echo json_encode(['success' => $success, 'message' => $message]);
     exit;
 }
 
-$name = $data['name'];
+$data = json_decode(file_get_contents('php://input'), true);
+
+// 1. Validação de Entrada
+if (!$data || empty($data['name']) || empty($data['email']) || empty($data['password'])) {
+    send_json_response(false, 'Todos os campos são obrigatórios.', 400);
+}
+
+$name = trim($data['name']);
 $email = $data['email'];
 $password = $data['password'];
-$password_hash = password_hash($password, PASSWORD_DEFAULT);
 
+if (strlen($name) < 2) {
+    send_json_response(false, 'O nome deve ter pelo menos 2 caracteres.', 400);
+}
+
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    send_json_response(false, 'Formato de e-mail inválido.', 400);
+}
+
+if (strlen($password) < 8) {
+    send_json_response(false, 'A senha deve ter pelo menos 8 caracteres.', 400);
+}
+
+// 2. Lógica de Registro com Tratamento de Erros
 try {
-    $stmt = $pdo->prepare("INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)");
-    $stmt->execute([$name, $email, $password_hash]);
-    echo json_encode(['success' => true, 'message' => 'Usuário cadastrado com sucesso!']);
+    $password_hash = password_hash($password, PASSWORD_DEFAULT);
+
+    $stmt = $pdo->prepare("INSERT INTO users (name, email, password_hash) VALUES (:name, :email, :password_hash)");
+    $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+    $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+    $stmt->bindParam(':password_hash', $password_hash, PDO::PARAM_STR);
+
+    $stmt->execute();
+
+    send_json_response(true, 'Usuário cadastrado com sucesso!', 201); // 201 Created
+
 } catch (PDOException $e) {
-    if ($e->errorInfo[1] == 1062) { // Código de erro para entrada duplicada
-        echo json_encode(['success' => false, 'message' => 'Este e-mail já está em uso.']);
+    if ($e->errorInfo[1] == 1062) { // Código de erro para entrada duplicada (email único)
+        send_json_response(false, 'Este e-mail já está em uso.', 409); // 409 Conflict
     } else {
-        echo json_encode(['success' => false, 'message' => 'Erro ao cadastrar usuário.']);
+        // Erro interno do servidor
+        send_json_response(false, 'Ocorreu um erro no servidor ao tentar registrar.', 500);
     }
 }
 ?>
