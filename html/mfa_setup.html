@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AssetManager - Configurar MFA</title>
     <link rel="stylesheet" href="../css/base.css">
-    <link rel="stylesheet" href="../css/login.css"> <!-- Reutilizando estilos simples -->
+    <link rel="stylesheet" href="../css/login.css">
 </head>
 <body>
     <div class="container" style="max-width: 500px;">
@@ -13,9 +13,15 @@
         <p>Escaneie o QR Code abaixo com seu aplicativo autenticador (Google Authenticator, Authy, etc.).</p>
 
         <div id="mfa-setup-container">
-            <div id="qrcode" style="background-color: white; padding: 1rem; margin: 1.5rem auto; width: fit-content; border-radius: 8px;">
+            <div id="qrcode" 
+                style="background-color: white; 
+                       padding: 1rem; 
+                       margin: 1.5rem auto; 
+                       width: fit-content; 
+                       border-radius: 8px;">
                 <!-- O QR Code será renderizado aqui pelo JavaScript -->
             </div>
+
             <p>Depois de escanear, insira o código de 6 dígitos gerado pelo aplicativo para verificar e ativar o MFA.</p>
 
             <form id="mfa-verify-form">
@@ -27,9 +33,23 @@
         <div id="message"></div>
         <p style="margin-top: 2rem;"><a href="dashboard.html">Voltar para o Dashboard</a></p>
     </div>
-    <script src="../js/utils.js"></script>
-    <!-- Biblioteca para gerar o QR Code -->
+
+    <!-- Biblioteca de QR Code -->
     <script src="https://cdn.jsdelivr.net/npm/davidshimjs-qrcodejs@0.0.2/qrcode.min.js"></script>
-    <script src="../js/mfa_setup.js"></script>
+
+    <script>
+        // Exemplo simples: gera um QR Code fixo compatível com Google Authenticator
+        const secret = "JBSWY3DPEHPK3PXP"; // exemplo base32
+        const issuer = "AssetManager";
+        const account = "usuario@assetmanager.com";
+        const otpauthUrl = `otpauth://totp/${issuer}:${account}?secret=${secret}&issuer=${issuer}`;
+
+        // Gera o QR Code na tela
+        new QRCode(document.getElementById("qrcode"), {
+            text: otpauthUrl,
+            width: 200,
+            height: 200
+        });
+    </script>
 </body>
 </html>
