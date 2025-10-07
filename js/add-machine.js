@@ -1,15 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const addMachineForm = document.getElementById('add-machine-form');
-    const messageDiv = document.getElementById('message');
     const API_BASE_URL = '../api/machines/';
-
-    const showMessage = (msg, isSuccess) => {
-        if (messageDiv) {
-            messageDiv.textContent = msg;
-            messageDiv.className = isSuccess ? 'success' : 'error';
-            messageDiv.style.display = 'block';
-        }
-    };
 
     if (addMachineForm) {
         addMachineForm.addEventListener('submit', async (e) => {

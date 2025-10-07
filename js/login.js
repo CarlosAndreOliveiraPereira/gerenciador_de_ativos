@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('login-form');
-    const messageDiv = document.getElementById('message');
 
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
@@ -17,20 +16,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await response.json();
 
                 if (result.success) {
-                    window.location.href = 'dashboard.html'; // Redireciona para o dashboard
+                    window.location.href = 'dashboard.html';
                 } else {
-                    if (messageDiv) {
-                        messageDiv.textContent = result.message;
-                        messageDiv.className = 'error';
-                        messageDiv.style.display = 'block';
-                    }
+                    showMessage(result.message, false);
                 }
             } catch (error) {
-                if (messageDiv) {
-                    messageDiv.textContent = 'Ocorreu um erro de conexão. Tente novamente.';
-                    messageDiv.className = 'error';
-                    messageDiv.style.display = 'block';
-                }
+                showMessage('Ocorreu um erro de conexão. Tente novamente.', false);
             }
         });
     }

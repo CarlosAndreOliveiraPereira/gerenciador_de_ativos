@@ -1,0 +1,54 @@
+-- AssetManager - Database Setup Script
+-- Este script cria o banco de dados e as tabelas necessárias para a aplicação.
+
+-- --------------------------------------------------------
+--
+-- Criação do Banco de Dados
+--
+-- Remove o banco de dados antigo se ele existir, para uma instalação limpa.
+DROP DATABASE IF EXISTS `asset_manager`;
+
+-- Cria o novo banco de dados com codificação UTF-8 para suportar caracteres especiais.
+CREATE DATABASE `asset_manager` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- Seleciona o banco de dados para usar nas próximas operações.
+USE `asset_manager`;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `users`
+-- Armazena as informações dos usuários do sistema.
+--
+CREATE TABLE `users` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  `email` VARCHAR(255) NOT NULL,
+  `password_hash` VARCHAR(255) NOT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `machines`
+-- Armazena as informações das máquinas cadastradas, com vínculo ao usuário.
+--
+CREATE TABLE `machines` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `user_id` INT(11) NOT NULL,
+  `name` VARCHAR(255) NOT NULL,
+  `model` VARCHAR(255) NOT NULL,
+  `serial_number` VARCHAR(255) NOT NULL,
+  `description` TEXT DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `machines_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Fim do Script
+--

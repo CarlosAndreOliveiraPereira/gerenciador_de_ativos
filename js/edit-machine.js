@@ -1,15 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const editMachineForm = document.getElementById('edit-machine-form');
-    const messageDiv = document.getElementById('message');
     const API_BASE_URL = '../api/machines/';
-
-    const showMessage = (msg, isSuccess) => {
-        if (messageDiv) {
-            messageDiv.textContent = msg;
-            messageDiv.className = isSuccess ? 'success' : 'error';
-            messageDiv.style.display = 'block';
-        }
-    };
 
     if (editMachineForm) {
         const urlParams = new URLSearchParams(window.location.search);
@@ -20,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Populates the form with the machine's data
         const populateEditForm = async () => {
             try {
                 const response = await fetch(API_BASE_URL + 'read.php');
@@ -39,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         setTimeout(() => window.location.href = 'dashboard.html', 2000);
                     }
                 } else {
-                     window.location.href = 'login.html'; // Auth error or other issue
+                     window.location.href = 'login.html';
                 }
             } catch (error) {
                  showMessage('Erro ao carregar dados da máquina.', false);
@@ -48,7 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         populateEditForm();
 
-        // Handles the form submission
         editMachineForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const data = {

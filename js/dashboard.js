@@ -1,16 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const machineList = document.getElementById('machine-list')?.querySelector('tbody');
     const logoutButton = document.getElementById('logout-button');
-    const messageDiv = document.getElementById('message');
     const API_BASE_URL = '../api/machines/';
-
-    const showMessage = (msg, isSuccess) => {
-        if (messageDiv) {
-            messageDiv.textContent = msg;
-            messageDiv.className = isSuccess ? 'success' : 'error';
-            messageDiv.style.display = 'block';
-        }
-    };
 
     // Fetches and displays the list of machines
     const loadMachines = async () => {

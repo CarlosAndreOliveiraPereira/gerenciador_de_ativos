@@ -1,47 +1,51 @@
 <?php
-header('Content-Type: application/json');
 require_once '../middleware/auth_check.php';
 require_once '../config/database.php';
 
-$data = json_decode(file_get_contents('php://input'));
+header('Content-Type: application/json');
 
-if (empty($data->id)) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'ID da máquina não fornecido.']);
+// Função para enviar resposta JSON e sair
+function send_json_response($success, $message, $statusCode = 200) {
+    http_response_code($statusCode);
+    echo json_encode(['success' => $success, 'message' => $message]);
     exit;
 }
 
+$data = json_decode(file_get_contents('php://input'));
+
+// 1. Validação de Entrada
+if (!$data || empty($data->id)) {
+    send_json_response(false, 'O ID da máquina é obrigatório.', 400);
+}
+
+// 2. Sanitização do ID
+$id = filter_var($data->id, FILTER_VALIDATE_INT);
+if ($id === false) {
+    send_json_response(false, 'Formato de ID inválido.', 400);
+}
+
 $user_id = $_SESSION['user_id'];
-$machine_id = $data->id;
 
+// 3. Lógica de Exclusão com Tratamento de Erros e Verificação de Propriedade
 try {
-    // Verifica se a máquina pertence ao usuário logado
-    $check_query = "SELECT user_id FROM machines WHERE id = :id";
-    $check_stmt = $pdo->prepare($check_query);
-    $check_stmt->bindParam(':id', $machine_id, PDO::PARAM_INT);
-    $check_stmt->execute();
-    $machine = $check_stmt->fetch(PDO::FETCH_ASSOC);
+    $query = "DELETE FROM machines WHERE id = :id AND user_id = :user_id";
 
-    if (!$machine || $machine['user_id'] != $user_id) {
-        http_response_code(403); // Forbidden
-        echo json_encode(['success' => false, 'message' => 'Você não tem permissão para excluir esta máquina.']);
-        exit;
-    }
+    $stmt = $pdo->prepare($query);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
 
-    // Se a verificação passar, exclui a máquina
-    $delete_query = "DELETE FROM machines WHERE id = :id";
-    $delete_stmt = $pdo->prepare($delete_query);
-    $delete_stmt->bindParam(':id', $machine_id, PDO::PARAM_INT);
+    $stmt->execute();
 
-    if ($delete_stmt->execute()) {
-        echo json_encode(['success' => true, 'message' => 'Máquina excluída com sucesso!']);
+    // Verifica se alguma linha foi realmente excluída
+    if ($stmt->rowCount() > 0) {
+        send_json_response(true, 'Máquina excluída com sucesso!');
     } else {
-        http_response_code(500);
-        echo json_encode(['success' => false, 'message' => 'Não foi possível excluir a máquina.']);
+        // Nenhuma linha afetada, significa que a máquina não foi encontrada ou não pertence ao usuário
+        send_json_response(false, 'Máquina não encontrada ou você não tem permissão para excluí-la.', 404);
     }
 
 } catch (PDOException $e) {
-    http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Erro no servidor: ' . $e->getMessage()]);
+    // Erro interno do servidor
+    send_json_response(false, 'Ocorreu um erro no servidor ao excluir a máquina.', 500);
 }
 ?>
