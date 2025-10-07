@@ -1,5 +1,5 @@
--- AssetManager - Database Setup Script v2
--- Este script cria o banco de dados e as tabelas com a nova estrutura de máquinas.
+-- AssetManager - Database Setup Script v4 (E-mail Code MFA)
+-- Este script cria o banco de dados e as tabelas com a estrutura para MFA por código.
 
 -- --------------------------------------------------------
 --
@@ -12,17 +12,16 @@ USE `asset_manager`;
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `users`
+-- Estrutura da tabela `users` (com suporte a MFA por código)
 -- Armazena as informações dos usuários do sistema.
--- A tabela agora inclui campos para o Multi-Factor Authentication (MFA).
 --
 CREATE TABLE `users` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL,
   `email` VARCHAR(255) NOT NULL,
   `password_hash` VARCHAR(255) NOT NULL,
-  `mfa_code` VARCHAR(6) DEFAULT NULL,
-  `mfa_code_expires_at` DATETIME DEFAULT NULL,
+  `mfa_code` VARCHAR(6) DEFAULT NULL, -- Código de 6 dígitos para verificação
+  `mfa_code_expires_at` DATETIME DEFAULT NULL, -- Data de expiração do código
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
@@ -31,7 +30,7 @@ CREATE TABLE `users` (
 -- --------------------------------------------------------
 
 --
--- Estrutura da tabela `machines` (NOVA VERSÃO)
+-- Estrutura da tabela `machines`
 -- Armazena as informações das máquinas com os novos campos solicitados.
 --
 CREATE TABLE `machines` (

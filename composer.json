@@ -1,0 +1,13 @@
+{
+    "name": "assetmanager/app",
+    "description": "AssetManager Application",
+    "require": {
+        "rob-lester/gauth-php": "^1.0"
+    },
+    "authors": [
+        {
+            "name": "Jules",
+            "email": "jules@agent.com"
+        }
+    ]
+}
