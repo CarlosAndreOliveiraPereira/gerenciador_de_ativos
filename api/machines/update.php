@@ -13,47 +13,65 @@ function send_json_response($success, $message, $statusCode = 200) {
 
 $data = json_decode(file_get_contents('php://input'));
 
-// 1. Validação de Entrada
-if (!$data || empty($data->id) || empty($data->name) || empty($data->model) || empty($data->serial_number)) {
-    send_json_response(false, 'ID, nome, modelo e número de série são obrigatórios.', 400);
+// Validação de Entrada
+if (!$data || empty($data->id)) {
+    send_json_response(false, 'O ID da máquina é obrigatório.', 400);
 }
 
-// 2. Sanitização dos Dados
+// Sanitização dos Dados
 $id = $data->id;
-$name = trim($data->name);
-$model = trim($data->model);
-$serial_number = trim($data->serial_number);
-$description = isset($data->description) ? trim($data->description) : '';
+$localidade = isset($data->localidade) ? trim($data->localidade) : null;
+$nome_dispositivo = isset($data->nome_dispositivo) ? trim($data->nome_dispositivo) : null;
+$numero_serie = isset($data->numero_serie) ? trim($data->numero_serie) : null;
+$nota_fiscal = isset($data->nota_fiscal) ? trim($data->nota_fiscal) : null;
+$responsavel = isset($data->responsavel) ? trim($data->responsavel) : null;
+$email_responsavel = isset($data->email_responsavel) ? filter_var(trim($data->email_responsavel), FILTER_SANITIZE_EMAIL) : null;
+$setor = isset($data->setor) ? trim($data->setor) : null;
+$windows_update_ativo = isset($data->windows_update_ativo) ? trim($data->windows_update_ativo) : null;
+$sistema_operacional = isset($data->sistema_operacional) ? trim($data->sistema_operacional) : null;
+$observacao = isset($data->observacao) ? trim($data->observacao) : null;
 $user_id = $_SESSION['user_id'];
 
-if (empty($name) || empty($model) || empty($serial_number)) {
-    send_json_response(false, 'Os campos obrigatórios não podem estar vazios.', 400);
-}
-
-// 3. Lógica de Atualização com Tratamento de Erros e Verificação de Propriedade
+// Lógica de Atualização com Tratamento de Erros
 try {
-    $query = "UPDATE machines SET name = :name, model = :model, serial_number = :serial_number, description = :description WHERE id = :id AND user_id = :user_id";
+    $query = "UPDATE machines SET
+                localidade = :localidade,
+                nome_dispositivo = :nome_dispositivo,
+                numero_serie = :numero_serie,
+                nota_fiscal = :nota_fiscal,
+                responsavel = :responsavel,
+                email_responsavel = :email_responsavel,
+                setor = :setor,
+                windows_update_ativo = :windows_update_ativo,
+                sistema_operacional = :sistema_operacional,
+                observacao = :observacao
+              WHERE id = :id AND user_id = :user_id";
 
     $stmt = $pdo->prepare($query);
-    $stmt->bindParam(':name', $name, PDO::PARAM_STR);
-    $stmt->bindParam(':model', $model, PDO::PARAM_STR);
-    $stmt->bindParam(':serial_number', $serial_number, PDO::PARAM_STR);
-    $stmt->bindParam(':description', $description, PDO::PARAM_STR);
+
+    $stmt->bindParam(':localidade', $localidade, PDO::PARAM_STR);
+    $stmt->bindParam(':nome_dispositivo', $nome_dispositivo, PDO::PARAM_STR);
+    $stmt->bindParam(':numero_serie', $numero_serie, PDO::PARAM_STR);
+    $stmt->bindParam(':nota_fiscal', $nota_fiscal, PDO::PARAM_STR);
+    $stmt->bindParam(':responsavel', $responsavel, PDO::PARAM_STR);
+    $stmt->bindParam(':email_responsavel', $email_responsavel, PDO::PARAM_STR);
+    $stmt->bindParam(':setor', $setor, PDO::PARAM_STR);
+    $stmt->bindParam(':windows_update_ativo', $windows_update_ativo, PDO::PARAM_STR);
+    $stmt->bindParam(':sistema_operacional', $sistema_operacional, PDO::PARAM_STR);
+    $stmt->bindParam(':observacao', $observacao, PDO::PARAM_STR);
     $stmt->bindParam(':id', $id, PDO::PARAM_INT);
     $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
 
     $stmt->execute();
 
-    // Verifica se alguma linha foi realmente atualizada
     if ($stmt->rowCount() > 0) {
         send_json_response(true, 'Máquina atualizada com sucesso!');
     } else {
-        // Nenhuma linha afetada, significa que a máquina não foi encontrada ou não pertence ao usuário
-        send_json_response(false, 'Máquina não encontrada ou você não tem permissão para editá-la.', 404);
+        send_json_response(false, 'Máquina não encontrada, ou você não tem permissão, ou nenhum dado foi alterado.', 404);
     }
 
 } catch (PDOException $e) {
-    // Erro interno do servidor
+    // Para depuração: error_log($e->getMessage());
     send_json_response(false, 'Ocorreu um erro no servidor ao atualizar a máquina.', 500);
 }
 ?>

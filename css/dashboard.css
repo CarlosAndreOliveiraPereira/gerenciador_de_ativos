@@ -93,3 +93,35 @@ td.actions {
 .btn-delete:hover {
     background-color: #c82333;
 }
+
+/* === Toolbar & Search Styles === */
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    max-width: 500px;
+}
+
+#search-input {
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 6px 0 0 6px; /* Cantos arredondados apenas à esquerda */
+    border-right: none;
+}
+
+#search-button {
+    padding: 0.8rem 1rem;
+    border-radius: 0 6px 6px 0; /* Cantos arredondados apenas à direita */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

@@ -12,10 +12,20 @@
         <h1>Editar Máquina</h1>
         <form id="edit-machine-form">
             <input type="hidden" id="machine-id">
-            <input type="text" id="machine-name" placeholder="Nome da Máquina" required>
-            <input type="text" id="machine-model" placeholder="Modelo" required>
-            <input type="text" id="serial-number" placeholder="Número de Série" required>
-            <textarea id="machine-description" placeholder="Descrição/Observações"></textarea>
+            <input type="text" id="localidade" placeholder="Localidade">
+            <input type="text" id="nome_dispositivo" placeholder="Nome do Dispositivo (Ativo)">
+            <input type="text" id="numero_serie" placeholder="Número de Série">
+            <input type="text" id="nota_fiscal" placeholder="Nota Fiscal (NF)">
+            <input type="text" id="responsavel" placeholder="Responsável">
+            <input type="email" id="email_responsavel" placeholder="E-mail do Responsável">
+            <input type="text" id="setor" placeholder="Setor">
+            <select id="windows_update_ativo">
+                <option value="" disabled>Windows Update Ativo?</option>
+                <option value="Sim">Sim</option>
+                <option value="Nao">Não</option>
+            </select>
+            <input type="text" id="sistema_operacional" placeholder="Sistema Operacional">
+            <textarea id="observacao" placeholder="Observação"></textarea>
             <button type="submit">Salvar Alterações</button>
         </form>
         <div id="message"></div>
