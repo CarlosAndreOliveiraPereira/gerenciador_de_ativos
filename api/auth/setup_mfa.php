@@ -41,8 +41,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         // Armazena o segredo temporariamente na sessão para verificação posterior
         $_SESSION['mfa_temp_secret'] = $secret;
 
+        $account_name = $user['email'];
+        // Garante que o nome da conta seja um e-mail completo para o QR Code
+        if (filter_var($account_name, FILTER_VALIDATE_EMAIL) === false) {
+            $account_name .= '@grupomysa.com.br';
+        }
+
         $issuer = 'AssetManager';
-        $otpauth_url = $gauth->getURL($user['email'], $issuer, $secret);
+        $otpauth_url = $gauth->getURL($account_name, $issuer, $secret);
 
         send_json_response(true, ['otpauth_url' => $otpauth_url]);
 
@@ -61,9 +67,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
 
     try {
-        // Verifica o código fornecido com o segredo temporário
+        // Verifica o código com uma tolerância de 2 intervalos de 30s para lidar com clock skew
         $gauth = new GAuth();
-        if ($gauth->verifyCode($temp_secret, $mfa_code)) {
+        if ($gauth->verifyCode($temp_secret, $mfa_code, 2)) {
             // Sucesso! Salva o segredo permanente no banco de dados
             $stmt = $pdo->prepare("UPDATE users SET mfa_secret = :secret WHERE id = :id");
             $stmt->bindParam(':secret', $temp_secret, PDO::PARAM_STR);
