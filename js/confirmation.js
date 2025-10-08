@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (result.success) {
                     sessionStorage.removeItem('registrationData');
                     setTimeout(() => {
-                        window.location.href = 'login.html';
+                        window.location.href = 'mfa_setup.html'; // Redireciona para a configuração do MFA
                     }, 2000);
                 }
             } catch (error) {

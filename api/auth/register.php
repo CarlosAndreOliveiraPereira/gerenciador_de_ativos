@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once '../config/database.php';
 
 header('Content-Type: application/json');
@@ -29,6 +30,11 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     send_json_response(false, 'Formato de e-mail inválido.', 400);
 }
 
+// Validação de domínio de e-mail
+if (substr($email, -17) !== '@grupomysa.com.br') {
+    send_json_response(false, 'O e-mail deve pertencer ao domínio @grupomysa.com.br.', 400);
+}
+
 if (strlen($password) < 8) {
     send_json_response(false, 'A senha deve ter pelo menos 8 caracteres.', 400);
 }
@@ -44,7 +50,11 @@ try {
 
     $stmt->execute();
 
-    send_json_response(true, 'Usuário cadastrado com sucesso!', 201); // 201 Created
+    // Iniciar a sessão e armazenar o ID do usuário para o setup do MFA
+    $_SESSION['user_id'] = $pdo->lastInsertId();
+    $_SESSION['mfa_pending'] = true; // Sinalizador para o processo de MFA
+
+    send_json_response(true, 'Usuário cadastrado com sucesso! Redirecionando para a configuração de MFA.', 201);
 
 } catch (PDOException $e) {
     if ($e->errorInfo[1] == 1062) { // Código de erro para entrada duplicada (email único)
