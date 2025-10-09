@@ -13,4 +13,10 @@ try {
     // Em caso de falha na conexão, encerra o script e exibe o erro
     die("ERRO: Não foi possível conectar. " . $e->getMessage());
 }
+
+// --- Configurações do Microsoft Graph API ---
+// Substitua com os valores reais do seu aplicativo no Microsoft Entra ID
+define('MICROSOFT_CLIENT_ID', 'SEU_CLIENT_ID_AQUI');
+define('MICROSOFT_CLIENT_SECRET', 'SEU_CLIENT_SECRET_AQUI');
+define('MICROSOFT_TENANT_ID', 'SEU_TENANT_ID_AQUI');
 ?>
