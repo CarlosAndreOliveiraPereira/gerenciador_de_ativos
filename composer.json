@@ -1,9 +1,7 @@
 {
     "name": "assetmanager/app",
     "description": "AssetManager Application",
-    "require": {
-        "thenetworg/oauth2-azure": "^2.1"
-    },
+    "require": {},
     "authors": [
         {
             "name": "Jules",
