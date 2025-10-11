@@ -8,11 +8,6 @@
 </head>
 <body>
     <header class="app-header">
-        <div class="header-left">
-            <button onclick="history.back()" class="nav-btn">&larr;</button>
-            <button onclick="history.forward()" class="nav-btn">&rarr;</button>
-        </div>
-        <img src="../img/logo.png" alt="Logo MYSA" class="logo">
     </header>
 </body>
 </html>
