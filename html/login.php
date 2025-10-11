@@ -3,6 +3,7 @@
 <link rel="stylesheet" href="../css/login.css">
 
 <div class="container">
+    <img src="../img/logo.png" alt="Logo MYSA" class="logo">
     <div id="login-form-container">
         <h1>Login</h1>
         <form id="login-form">

@@ -3,6 +3,7 @@
 <link rel="stylesheet" href="../css/login.css">
 
 <div class="container">
+    <img src="../img/logo.png" alt="Logo MYSA" class="logo">
     <h1>Cadastro de Usuário</h1>
     <form id="register-form">
         <input type="text" id="register-name" placeholder="Nome Completo" required>
