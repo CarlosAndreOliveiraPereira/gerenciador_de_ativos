@@ -8,7 +8,6 @@
 </head>
 <body>
     <header class="main-header">
-        <img src="../img/logo.png" alt="Logo MYSA" class="logo">
     </header>
 </body>
 </html>
