@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/header.css">
+    <title>AssetManager - Dashboard</title>
+    <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+    <header class="app-header">
+        <img src="../img/logo.png" alt="Logo MYSA" class="logo">
+    </header>
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Dashboard de Máquinas</h1>
+            <div class="toolbar">
+                <input type="search" id="search-bar" placeholder="Buscar por nome, localidade...">
+                <a href="add-machine.html" class="btn-add-machine">Adicionar Máquina</a>
+            <a href="login.html" class="btn-logout">Sair</a>
+            </div>
+        </div>
+        <div id="machines-container">
+            <!-- As máquinas serão carregadas aqui -->
+        </div>
+        <div id="message"></div>
+    </div>
+    <script src="../js/utils.js"></script>
+    <script src="../js/dashboard.js"></script>
+</body>
+</html>
