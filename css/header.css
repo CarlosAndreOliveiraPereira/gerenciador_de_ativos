@@ -5,6 +5,10 @@
     margin-bottom: 2rem;
 }
 
+.logo {
+    max-width: 150px;
+    height: auto;
+}
 
 .app-header {
     display: flex;
