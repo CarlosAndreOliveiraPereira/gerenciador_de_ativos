@@ -1,6 +1,17 @@
 /* === Confirmation Page Specific Styles === */
 .container {
     max-width: 500px;
+    background-color: var(--container-bg);
+    padding: 2.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+}
+
+h1 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
 }
 
 #confirmation-details {
@@ -27,7 +38,7 @@
 }
 
 .btn-secondary {
-    background-color: #494a4b; /* A dark gray that fits the theme */
+    background-color: #494a4b;
     color: var(--text-light);
 }
 
