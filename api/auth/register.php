@@ -29,64 +29,16 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     send_json_response(false, 'Formato de e-mail inválido.', 400);
 }
 
-// Validação de domínio de e-mail
-if (substr($email, -17) !== '@grupomysa.com.br') {
-    send_json_response(false, 'O e-mail deve pertencer ao domínio @grupomysa.com.br.', 400);
-}
+// Validação de domínio de e-mail (removida)
+// if (substr($email, -17) !== '@grupomysa.com.br') {
+//     send_json_response(false, 'O e-mail deve pertencer ao domínio @grupomysa.com.br.', 400);
+// }
 
 if (strlen($password) < 8) {
     send_json_response(false, 'A senha deve ter pelo menos 8 caracteres.', 400);
 }
 
-// Função para obter o token de acesso da Microsoft (App-Only)
-function get_microsoft_access_token() {
-    $token_endpoint = 'https://login.microsoftonline.com/' . MICROSOFT_TENANT_ID . '/oauth2/v2.0/token';
-    $token_params = [
-        'client_id' => MICROSOFT_CLIENT_ID,
-        'client_secret' => MICROSOFT_CLIENT_SECRET,
-        'scope' => 'https://graph.microsoft.com/.default',
-        'grant_type' => 'client_credentials',
-    ];
-
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $token_endpoint);
-    curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($token_params));
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $response = curl_exec($ch);
-    curl_close($ch);
-
-    $token_data = json_decode($response, true);
-    if (!isset($token_data['access_token'])) {
-        error_log("Microsoft Graph API: Falha ao obter o token de acesso.");
-        return null;
-    }
-    return $token_data['access_token'];
-}
-
-// 2. Validar existência do e-mail na Microsoft
-$access_token = get_microsoft_access_token();
-if (!$access_token) {
-    send_json_response(false, 'Ocorreu um erro interno ao validar o e-mail. Por favor, contate o administrador.', 500);
-}
-
-$graph_endpoint = 'https://graph.microsoft.com/v1.0/users/' . urlencode($email);
-$headers = ['Authorization: Bearer ' . $access_token];
-
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, $graph_endpoint);
-curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_exec($ch);
-$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-curl_close($ch);
-
-if ($http_code === 404) {
-    send_json_response(false, 'O e-mail fornecido não foi encontrado no diretório da empresa.', 400);
-} elseif ($http_code !== 200) {
-    error_log("Microsoft Graph API: Erro HTTP " . $http_code . " ao verificar o usuário " . $email);
-    send_json_response(false, 'Ocorreu um erro ao verificar o e-mail com a Microsoft. Por favor, contate o administrador.', 500);
-}
+// A validação de e-mail da Microsoft foi removida para permitir qualquer e-mail.
 
 // 3. Lógica de Registro com Tratamento de Erros
 try {
