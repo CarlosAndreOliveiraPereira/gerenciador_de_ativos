@@ -1,7 +1,10 @@
 /* === Landing Page Specific Styles === */
-.landing-page {
-    text-align: center;
+.container {
     max-width: 600px;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    text-align: center;
 }
 
 .landing-page h1 {
