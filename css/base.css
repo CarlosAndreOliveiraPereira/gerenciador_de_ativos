@@ -1,89 +1,45 @@
 /* === Base Styles & Variables === */
 :root {
-    --background-dark: #181918;
-    --primary-yellow: #efb421;
-    --text-light: #f0f2f5;
-    --text-dark: #ffffff;
-    --border-color: #efb421;
-    --container-bg: #181918;
-    --shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --background-dark: #1e1e1e;
+    --primary-yellow: #ffc107;
+    --text-light: #e0e0e0;
+    --text-dark: #121212;
+    --border-color: #444;
+    --container-bg: #2a2a2a;
+    --shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
 }
 
 /* === Reset & Global Styles === */
 body {
-    font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     background-color: var(--background-dark);
     color: var(--text-light);
     margin: 0;
+    padding: 1rem;
+    box-sizing: border-box;
+    line-height: 1.6;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    padding: 1rem;
-    box-sizing: border-box;
 }
-
-/* === General Layout & Typography === */
-.container {
-    background-color: var(--container-bg);
-    padding: 2.5rem;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    box-shadow: var(--shadow);
-    width: 100%;
-    box-sizing: border-box;
-}
-
-h1, h2, h3 {
-    color: var(--text-light);
-    margin-bottom: 1.5rem;
-    text-align: center;
-}
-
-h1 { font-size: 2rem; }
-h2 { font-size: 1.75rem; color: var(--primary-yellow); }
-h3 { font-size: 1.25rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 1rem;}
 
 a {
     color: var(--primary-yellow);
     text-decoration: none;
+    transition: color 0.2s;
 }
 
 a:hover {
-    text-decoration: underline;
+    color: #ffd54f; /* Lighter yellow on hover */
 }
 
-/* === Generic Form & Button Styles === */
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
-}
-
-input[type="text"],
-input[type="email"],
-input[type="password"],
-textarea {
-    padding: 0.9rem;
-    border: 1px solid var(--border-color);
-    background-color: var(--background-dark);
-    color: var(--text-light);
-    border-radius: 6px;
-    font-size: 1rem;
-    transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-input:focus, textarea:focus {
-    outline: none;
-    border-color: var(--primary-yellow);
-    box-shadow: 0 0 0 3px rgba(239, 180, 33, 0.2);
-}
-
+/* === Generic Button Styles === */
 .btn, button {
     display: inline-block;
-    padding: 0.9rem 1.5rem;
+    padding: 10px 20px;
     border: none;
-    border-radius: 6px;
+    border-radius: 5px;
     font-size: 1rem;
     font-weight: 600;
     text-align: center;
@@ -95,18 +51,18 @@ input:focus, textarea:focus {
 }
 
 button:hover, .btn:hover {
-    background-color: #d8a21e; /* A slightly darker yellow for hover */
-    transform: translateY(-1px);
+    background-color: #ffca28; /* Slightly lighter yellow */
+    transform: translateY(-2px);
 }
 
 /* === Message Styles === */
 #message {
     text-align: center;
-    margin-top: 1.5rem;
-    font-weight: 600;
-    padding: 0.8rem;
-    border-radius: 6px;
+    margin-top: 1rem;
+    font-weight: 500;
+    padding: 10px;
+    border-radius: 5px;
     display: none; /* Hidden by default */
 }
-#message.success { color: #28a745; background-color: #d4edda; border: 1px solid #c3e6cb; display: block; }
-#message.error { color: #dc3545; background-color: #f8d7da; border: 1px solid #f5c6cb; display: block; }
+#message.success { color: #2e7d32; background-color: #e8f5e9; border: 1px solid #a5d6a7; display: block; }
+#message.error { color: #c62828; background-color: #ffcdd2; border: 1px solid #ef9a9a; display: block; }
