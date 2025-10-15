@@ -19,6 +19,8 @@ CREATE TABLE `users` (
   `name` VARCHAR(255) NOT NULL,
   `email` VARCHAR(255) NOT NULL,
   `password_hash` VARCHAR(255) NOT NULL,
+  `mfa_code` VARCHAR(6) DEFAULT NULL,
+  `mfa_code_expires_at` DATETIME DEFAULT NULL,
   `password_reset_token` VARCHAR(255) DEFAULT NULL,
   `password_reset_expires_at` DATETIME DEFAULT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
