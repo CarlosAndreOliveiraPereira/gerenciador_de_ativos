@@ -1,0 +1,14 @@
+/* === Machine Form Specific Styles (Add & Edit) === */
+.container {
+    max-width: 700px;
+}
+
+textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+p {
+    text-align: center;
+    margin-top: 1.5rem;
+}
