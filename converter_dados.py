@@ -874,7 +874,7 @@ def parse_data(data):
             record["email"] = email_match.group(0)
             remaining_line = remaining_line.replace(email_match.group(0), "").strip()
 
-        os_pattern = r'\b(Windows[\s\d\w\.\-]*|WIN[\s\d\w\.]*|Ubuntu[\s\d\w\.]*|MacOS[\s\d\w\.]*|Android[\s\d\w\.]*)\b'
+        os_pattern = r'\b(Windows[\s\d\w\.\-]*Pro|Windows[\s\d\w\.]*|WIN[\s\d\w\.]*|Ubuntu[\s\d\w\.]*|MacOS[\s\d\w\.]*|Android[\s\d\w\.]*)\b'
         os_match = re.search(os_pattern, remaining_line, re.IGNORECASE)
         if os_match:
             record["sistema_operacional"] = os_match.group(0).strip()
