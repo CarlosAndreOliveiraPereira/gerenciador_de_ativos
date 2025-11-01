@@ -1,5 +1,4 @@
 import re
-import sqlite3
 
 # Dados brutos fornecidos pelo usuário
 raw_data = """
@@ -418,7 +417,7 @@ CD - MINAS ABC-800 7PR28J3 Daniel Lobo daniel.lobo@grupomysa.com.br compras Sim 
 CD - MINAS PPP ABC-801 3438836 Thamires Silva thamires.silva@abcdaconstrucao.com.br PPP Sim Windowns 11 Pro
 CAF ABC-802 3438836 Lucilene Gomes
 Ana Cristina ABC-803 198338
-RH ABC-804 BRJ124MHX8 Maria Eduarda Sá mariaeduarda.sa@abcdaconstrucao.com.br Seguraçã do trabalho Sim Windowns 11 Pro
+RH ABC-804 BRJ124MHX8 Maria Eduarda Sá mariaeduarda.sa@grupomysa.com.br Seguraçã do trabalho Sim Windowns 11 Pro
 CD - MINAS ABC-805
 Marcelo Almeida ABC-806 ST:C159QJ3 Marcelo Almeida marceloalmeida@abcdaconstrucao.com.br Diretoria
 Raphael FATOR SI ABC-807 2PR28J3 Thales Souza thales.souza@abcdaconstrucao.com.br TRANSPORTE Sim Windowns 11 Pro
@@ -849,7 +848,8 @@ def parse_data(data):
         "csc", "financeiro", "jurídico", "dpto de transporte", "fator-si", "tesouraria",
         "expedição", "gerencia", "fep", "pós vendas", "compras", "diretoria", "dev",
         "fator si", "qualidade", "marketplace", "desenvolvimento", "segurança patrimonial",
-        "expansão", "dp", "logistica", "marketing", "fiscal", "juridico", "infra"
+        "expansão", "dp", "logistica", "marketing", "fiscal", "juridico", "infra",
+        "administrativo", "dba", "segurança do trabalho", "sesmt", "desing"
     ]
 
     for line in lines:
@@ -880,7 +880,7 @@ def parse_data(data):
             record["sistema_operacional"] = os_match.group(0).strip()
             remaining_line = remaining_line.replace(os_match.group(0), "").strip()
 
-        sn_pattern = r'\b(ST:[\w-]+|PE[\w]+|BRJ[\w]+|[\w]{7,})\b'
+        sn_pattern = r'\b(ST:[\w-]+|PE[\w]+|BRJ[\w]+|[A-Z0-9]{7,})\b'
         sn_match = re.search(sn_pattern, remaining_line)
         if sn_match and len(sn_match.group(1)) > 5:
             record["serial_number"] = sn_match.group(1)
@@ -897,13 +897,22 @@ def parse_data(data):
         possible_setor = []
         other_info = []
 
-        for word in words:
-            if word.lower() in setores_conhecidos:
+        # Tenta agrupar palavras capitalizadas como nomes de usuário
+        i = 0
+        while i < len(words):
+            word = words[i]
+            if re.match(r'^[A-Z][a-z]+$', word):
+                user_name_parts = [word]
+                # Agrupa palavras capitalizadas consecutivas
+                while i + 1 < len(words) and re.match(r'^[A-Z][a-z]+$', words[i+1]):
+                    user_name_parts.append(words[i+1])
+                    i += 1
+                possible_user.append(" ".join(user_name_parts))
+            elif word.lower() in setores_conhecidos:
                 possible_setor.append(word)
-            elif re.match(r'^[A-Z][a-z]+$', word):
-                possible_user.append(word)
             else:
                 other_info.append(word)
+            i += 1
 
         if possible_user:
             record["usuario"] = " ".join(possible_user)
@@ -922,18 +931,31 @@ def parse_data(data):
 
 def create_sql_file(records, filename="inventario.sql"):
     with open(filename, 'w', encoding='utf-8') as f:
-        f.write("CREATE TABLE IF NOT EXISTS inventario_computadores (\n")
-        f.write("    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    localizacao TEXT,\n")
-        f.write("    identificador TEXT,\n    serial_number TEXT,\n    usuario TEXT,\n")
-        f.write("    email TEXT,\n    setor TEXT,\n    ativo TEXT,\n")
-        f.write("    sistema_operacional TEXT,\n    observacoes TEXT\n);\n\n")
+        # Adiciona um usuário padrão
+        f.write("INSERT INTO `users` (`id`, `name`, `email`, `password_hash`) VALUES (1, 'Admin Padrão', 'admin@example.com', 'senha_nao_usada');\n\n")
 
         for record in records:
-            valid_keys = [k for k, v in record.items() if v is not None]
-            columns = ', '.join(valid_keys)
-            values = ', '.join(f"'{str(record[k]).replace("'", "''")}'" for k in valid_keys)
+            # Mapeia os nomes das colunas antigas para as novas
+            machine_record = {
+                'user_id': 1,
+                'localidade': record.get('localizacao'),
+                'nome_dispositivo': record.get('identificador'),
+                'numero_serie': record.get('serial_number'),
+                'responsavel': record.get('usuario'),
+                'email_responsavel': record.get('email'),
+                'setor': record.get('setor'),
+                'windows_update_ativo': record.get('ativo'),
+                'sistema_operacional': record.get('sistema_operacional'),
+                'observacao': record.get('observacoes')
+            }
+
+            # Monta o comando INSERT
+            valid_keys = [k for k, v in machine_record.items() if v is not None]
+            columns = ', '.join(f"`{k}`" for k in valid_keys)
+            values = ', '.join(f"'{str(v).replace("'", "''")}'" for v in [machine_record[k] for k in valid_keys])
+
             if columns:
-                f.write(f"INSERT INTO inventario_computadores ({columns}) VALUES ({values});\n")
+                f.write(f"INSERT INTO `machines` ({columns}) VALUES ({values});\n")
 
 if __name__ == "__main__":
     parsed_records = parse_data(raw_data)
