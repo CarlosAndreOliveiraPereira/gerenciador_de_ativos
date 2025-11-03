@@ -1,22 +1,23 @@
 .main-header {
-    padding: 1.5rem 0; /* Aumenta o espaçamento vertical */
+    padding: 1.5rem 0;
     text-align: center;
-    border-bottom: 1px solid var(--border-color); /* Usa a cor de borda do tema */
+    border-bottom: 1px solid var(--border-color);
     margin-bottom: 2rem;
 }
 
 .logo {
-    max-width: 250px; /* Aumenta o tamanho do logo */
+    max-width: 200px;  /* Ajusta a largura máxima para um tamanho mais adequado */
+    width: 100%;       /* Garante que o logo seja responsivo */
     height: auto;
     display: block;
-    margin: 0 auto; /* Centraliza o logo */
+    margin: 0 auto;
 }
 
 .app-header {
     display: flex;
-    justify-content: space-between; /* Ajusta o alinhamento */
+    justify-content: space-between;
     align-items: center;
-    padding: 1rem 2rem; /* Adiciona espaçamento horizontal */
+    padding: 1rem 2rem;
     border-bottom: 1px solid var(--border-color);
     margin-bottom: 2rem;
 }

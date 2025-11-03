@@ -57,12 +57,26 @@ button:hover, .btn:hover {
 
 /* === Message Styles === */
 #message {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border-radius: var(--border-radius);
     text-align: center;
-    margin-top: 1rem;
-    font-weight: 500;
-    padding: 10px;
-    border-radius: 5px;
-    display: none; /* Hidden by default */
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s;
+    visibility: hidden;
 }
-#message.success { color: #2e7d32; background-color: #e8f5e9; border: 1px solid #a5d6a7; display: block; }
-#message.error { color: #c62828; background-color: #ffcdd2; border: 1px solid #ef9a9a; display: block; }
+
+#message.success, #message.error {
+    color: white;
+    opacity: 1;
+    visibility: visible;
+}
+
+#message.success {
+    background-color: #27ae60; /* Verde mais moderno */
+}
+
+#message.error {
+    background-color: #e74c3c; /* Vermelho mais moderno */
+}
