@@ -3,30 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AssetManager - Dashboard</title>
     <link rel="stylesheet" href="../css/base.css">
     <link rel="stylesheet" href="../css/header.css">
-    <title>AssetManager - Dashboard</title>
     <link rel="stylesheet" href="../css/dashboard.css">
 </head>
 <body>
     <header class="app-header">
-        <img src="../jules-scratch/verification/logo mysa branco@300x.png" alt="Logo MYSA" class="logo">
+        <img src="../img/logo mysa branco@300x.png" alt="Logo MYSA" class="logo">
+        <div class="user-info">
+            <span id="user-name"></span>
+            <button id="logout-button">Sair</button>
+        </div>
     </header>
     <div class="container">
-        <div class="dashboard-header">
-            <h1>Dashboard de Máquinas</h1>
-            <div class="toolbar">
-                <input type="search" id="search-bar" placeholder="Buscar por nome, localidade...">
-                <a href="add-machine.html" class="btn-add-machine">Adicionar Máquina</a>
-            <a href="login.html" class="btn-logout">Sair</a>
-            </div>
+        <h1>Dashboard</h1>
+        <p>Bem-vindo ao painel de gerenciamento de ativos.</p>
+
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Buscar por nome, setor ou responsável...">
+            <button id="search-button">Buscar</button>
         </div>
-        <div id="machines-container">
-            <!-- As máquinas serão carregadas aqui -->
+
+        <div class="table-container">
+            <table id="machines-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Dispositivo</th>
+                        <th>Setor</th>
+                        <th>Responsável</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="machines-tbody">
+                    <!-- Linhas da tabela serão inseridas aqui via JavaScript -->
+                </tbody>
+            </table>
         </div>
-        <div id="message"></div>
     </div>
-    <script src="../js/utils.js"></script>
     <script src="../js/dashboard.js"></script>
 </body>
 </html>

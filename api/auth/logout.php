@@ -1,6 +1,22 @@
 <?php
 session_start();
-session_destroy(); // Destrói todos os dados da sessão
+
+// Destrói todas as variáveis de sessão
+$_SESSION = [];
+
+// Se desejar destruir a sessão completamente, apague também o cookie de sessão.
+// Nota: Isso destruirá a sessão e não apenas os dados da sessão!
+if (ini_get("session.use_cookies")) {
+    $params = session_get_cookie_params();
+    setcookie(session_name(), '', time() - 42000,
+        $params["path"], $params["domain"],
+        $params["secure"], $params["httponly"]
+    );
+}
+
+// Finalmente, destrói a sessão
+session_destroy();
+
 header('Content-Type: application/json');
-echo json_encode(['success' => true, 'message' => 'Logout realizado com sucesso.']);
+echo json_encode(['success' => true, 'message' => 'Logout bem-sucedido.']);
 ?>
