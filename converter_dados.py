@@ -1,4 +1,5 @@
 import re
+import uuid
 
 # Dados brutos fornecidos pelo usuário
 raw_data = """
@@ -824,138 +825,171 @@ ABC-1207 sim Windows 11 Pro
 """
 
 def sanitize_text(text):
-    if not text:
+    """Limpa o texto, removendo senhas, espaços excessivos e aspas."""
+    if not text or not isinstance(text, str):
         return None
-    # Remove senhas e informações sensíveis
+
+    # Padrões para identificar e remover senhas e informações sensíveis
     password_patterns = [
-        r'Senha\s*[:.]\s*[\w@#$!%*?&]+', r'abc@\d+#', r'Lxn\d+#',
-        r'Supp0rt3#01@@', r'lNX74@##', r'qwe123!@#', r'u8untu##'
+        r'Senha\s*[:.]\s*[\w@#$!%*?&]+', r'abc@\d+#', r'Lxn\d+(#|@##)?',
+        r'Supp0rt3#01@@', r'qwe123!@#', r'u8untu##', r'TDQ3TpySK6'
     ]
     for pattern in password_patterns:
         text = re.sub(pattern, '[REMOVIDO]', text, flags=re.IGNORECASE)
-    # Limpa espaços e caracteres especiais extras
-    text = ' '.join(text.split())
+
+    # Remove aspas e normaliza os espaços
     text = text.replace('"', '').replace("'", "")
-    return text.strip() if text else None
+    text = ' '.join(text.split())
+
+    return text.strip() or None
 
 def parse_data(data):
+    """Analisa os dados brutos e extrai informações estruturadas sobre usuários e máquinas."""
     records = []
     lines = data.strip().split('\n')
 
-    setores_conhecidos = [
-        "loja", "franquia", "vendas", "caixa", "rh", "ti", "monitoramento", "pce", "compra",
-        "almoxarifado", "contabilidade", "growth", "caf", "auditoria", "transporte", "mea",
-        "csc", "financeiro", "jurídico", "dpto de transporte", "fator-si", "tesouraria",
-        "expedição", "gerencia", "fep", "pós vendas", "compras", "diretoria", "dev",
-        "fator si", "qualidade", "marketplace", "desenvolvimento", "segurança patrimonial",
-        "expansão", "dp", "logistica", "marketing", "fiscal", "juridico", "infra",
-        "administrativo", "dba", "segurança do trabalho", "sesmt", "desing"
-    ]
-
     for line in lines:
-        original_line = line
-        record = {
-            "localizacao": None, "identificador": None, "serial_number": None,
-            "usuario": None, "email": None, "setor": None, "ativo": None,
-            "sistema_operacional": None, "observacoes": None
-        }
+        if not line.strip():
+            continue
 
-        # 1. Extrair Identificador
-        id_match = re.search(r'\b(ABC-?\d+(-NB)?)\b', line, re.IGNORECASE)
+        original_line = line
+
+        # 1. Extrai o identificador principal (ABC-XXX)
+        id_match = re.search(r'\b(ABC-?\d+(-NB)?)\b', original_line, re.IGNORECASE)
         if not id_match:
             continue
-        record["identificador"] = id_match.group(1).upper()
-        record["localizacao"] = line[:id_match.start()].strip() or None
-        remaining_line = line[id_match.end():].strip()
 
-        # 2. Extrair e remover padrões específicos
-        email_match = re.search(r'[\w\.\-]+@[\w\.\-]+', remaining_line, re.IGNORECASE)
-        if email_match:
-            record["email"] = email_match.group(0)
-            remaining_line = remaining_line.replace(email_match.group(0), "").strip()
+        identifier = id_match.group(1).upper().replace(" ", "")
 
-        os_pattern = r'\b(Windows[\s\d\w\.\-]*Pro|Windows[\s\d\w\.]*|WIN[\s\d\w\.]*|Ubuntu[\s\d\w\.]*|MacOS[\s\d\w\.]*|Android[\s\d\w\.]*)\b'
-        os_match = re.search(os_pattern, remaining_line, re.IGNORECASE)
-        if os_match:
-            record["sistema_operacional"] = os_match.group(0).strip()
-            remaining_line = remaining_line.replace(os_match.group(0), "").strip()
+        # Divide a linha em antes e depois do identificador
+        localidade_bruta = original_line[:id_match.start()].strip()
+        resto_linha = original_line[id_match.end():].strip()
 
-        sn_pattern = r'\b(ST:[\w-]+|PE[\w]+|BRJ[\w]+|[A-Z0-9]{7,})\b'
-        sn_match = re.search(sn_pattern, remaining_line)
-        if sn_match and len(sn_match.group(1)) > 5:
-            record["serial_number"] = sn_match.group(1)
-            remaining_line = remaining_line.replace(sn_match.group(1), "").strip()
+        # 2. Extrai informações com padrões específicos
+        email_match = re.search(r'[\w\.\-]+@[\w\.\-]+', resto_linha)
+        email = email_match.group(0).lower() if email_match else None
+        if email:
+            resto_linha = resto_linha.replace(email, "").strip()
 
-        ativo_match = re.search(r'\b(SIM|S|NÃO|N)\b', remaining_line, re.IGNORECASE)
+        os_match = re.search(r'\b(Windows[\s\d\w\.\-]*Pro|Windows[\s\d\w\.]*|WIN[\s\d\w\.]+|Ubuntu[\s\d\.\w-]*|MacOS[\s\d\w\.\-]*|Android[\s\d\w\.\-]*)\b', resto_linha, re.IGNORECASE)
+        sistema_operacional = os_match.group(0).strip() if os_match else None
+        if sistema_operacional:
+            resto_linha = resto_linha.replace(os_match.group(0), "").strip()
+
+        ativo_match = re.search(r'\b(SIM|S|NÃO|N)\b', resto_linha, re.IGNORECASE)
+        ativo = 'Sim' if ativo_match and ativo_match.group(0).upper().startswith('S') else 'Não'
         if ativo_match:
-            record["ativo"] = ativo_match.group(0).upper()
-            remaining_line = remaining_line.replace(ativo_match.group(0), "").strip()
+            resto_linha = resto_linha.replace(ativo_match.group(0), "").strip()
 
-        # 3. Tentar identificar setor e usuário do restante
-        words = [w for w in remaining_line.split() if w]
-        possible_user = []
-        possible_setor = []
-        other_info = []
+        sn_match = re.search(r'\b(ST:\s*[\w-]+|PE[\w]+|BRJ[\w]+|[A-Z0-9]{7,})\b', resto_linha)
+        serial_number = sn_match.group(0).strip() if sn_match and len(sn_match.group(0)) > 5 else None
+        if serial_number:
+            resto_linha = resto_linha.replace(serial_number, "").strip()
 
-        # Tenta agrupar palavras capitalizadas como nomes de usuário
-        i = 0
-        while i < len(words):
-            word = words[i]
-            if re.match(r'^[A-Z][a-z]+$', word):
-                user_name_parts = [word]
-                # Agrupa palavras capitalizadas consecutivas
-                while i + 1 < len(words) and re.match(r'^[A-Z][a-z]+$', words[i+1]):
-                    user_name_parts.append(words[i+1])
-                    i += 1
-                possible_user.append(" ".join(user_name_parts))
-            elif word.lower() in setores_conhecidos:
-                possible_setor.append(word)
+        # 3. O que sobra é o nome do usuário, setor e observações
+        partes_restantes = [p.strip() for p in resto_linha.split() if p.strip()]
+
+        # Heurística para nome de usuário (geralmente nomes próprios capitalizados)
+        nome_usuario_parts = []
+        outras_infos = []
+        for part in partes_restantes:
+            if re.match(r'^[A-Z][a-z]+', part) and len(part) > 2:
+                nome_usuario_parts.append(part)
             else:
-                other_info.append(word)
-            i += 1
+                outras_infos.append(part)
 
-        if possible_user:
-            record["usuario"] = " ".join(possible_user)
-        if possible_setor:
-            record["setor"] = " ".join(possible_setor)
+        usuario = " ".join(nome_usuario_parts) or "Não especificado"
+        observacoes_setor = " ".join(outras_infos)
 
-        record["observacoes"] = " ".join(other_info) if other_info else None
+        record = {
+            "localidade": sanitize_text(localidade_bruta),
+            "nome_dispositivo": sanitize_text(identifier),
+            "numero_serie": sanitize_text(serial_number),
+            "responsavel": sanitize_text(usuario),
+            "email_responsavel": email,
+            "windows_update_ativo": ativo,
+            "sistema_operacional": sanitize_text(sistema_operacional),
+            "observacao": sanitize_text(observacoes_setor)
+        }
 
-        # 4. Sanitizar todos os campos de texto
-        for key, value in record.items():
-            if isinstance(value, str):
-                record[key] = sanitize_text(value)
+        # Separar setor das observações
+        setor = "Não especificado"
+        if record["observacao"]:
+            # Tenta encontrar um setor conhecido nas observações
+            setores_conhecidos = ["loja", "rh", "ti", "compras", "financeiro", "vendas", "logistica"]
+            obs_lower = record["observacao"].lower()
+            for s in setores_conhecidos:
+                if s in obs_lower:
+                    setor = s.capitalize()
+                    record["observacao"] = record["observacao"].replace(s, "").strip()
+                    break
+        record["setor"] = setor
 
         records.append(record)
     return records
 
 def create_sql_file(records, filename="inventario.sql"):
-    with open(filename, 'w', encoding='utf-8') as f:
-        # Adiciona um usuário padrão
-        f.write("INSERT INTO `users` (`id`, `name`, `email`, `password_hash`) VALUES (1, 'Admin Padrão', 'admin@example.com', 'senha_nao_usada');\n\n")
+    """Gera um arquivo SQL com base nos registros analisados."""
+    users = {}  # Armazena usuários únicos pelo email
 
+    with open(filename, 'w', encoding='utf-8') as f:
+        f.write("-- Script de Inserção de Inventário\n")
+        f.write("USE `asset_manager`;\n\n")
+
+        # 1. Cria os usuários
+        user_id_counter = 1
         for record in records:
-            # Mapeia os nomes das colunas antigas para as novas
-            machine_record = {
-                'user_id': 1,
-                'localidade': record.get('localizacao'),
-                'nome_dispositivo': record.get('identificador'),
-                'numero_serie': record.get('serial_number'),
-                'responsavel': record.get('usuario'),
-                'email_responsavel': record.get('email'),
+            email = record.get('email_responsavel')
+            if email and email not in users:
+                nome = record.get('responsavel', 'Usuário')
+                # Gera uma senha aleatória segura (não será usada para login)
+                senha_hash = f"hash_placeholder_{uuid.uuid4()}"
+
+                users[email] = {
+                    "id": user_id_counter,
+                    "name": nome.replace("'", "''"),
+                    "password_hash": senha_hash
+                }
+                user_id_counter += 1
+
+        f.write("-- Inserindo Usuários\n")
+        for email, user_data in users.items():
+            f.write(f"INSERT INTO `users` (`id`, `name`, `email`, `password_hash`) VALUES "
+                    f"({user_data['id']}, '{user_data['name']}', '{email}', '{user_data['password_hash']}') "
+                    f"ON DUPLICATE KEY UPDATE name='{user_data['name']}';\n")
+        f.write("\n")
+
+        # 2. Cria as máquinas, associando ao usuário
+        f.write("-- Inserindo Máquinas\n")
+        for record in records:
+            email = record.get('email_responsavel')
+            user_id = users[email]['id'] if email in users else 'NULL' # Ou um ID padrão, ex: 1
+
+            # Remove o email da observação para não duplicar
+            if email and record['observacao']:
+                 record['observacao'] = record['observacao'].replace(email, '').strip()
+
+            values = {
+                'user_id': user_id,
+                'localidade': record.get('localidade'),
+                'nome_dispositivo': record.get('nome_dispositivo'),
+                'numero_serie': record.get('numero_serie'),
+                'responsavel': record.get('responsavel'),
+                'email_responsavel': record.get('email_responsavel'),
                 'setor': record.get('setor'),
-                'windows_update_ativo': record.get('ativo'),
+                'windows_update_ativo': record.get('windows_update_ativo'),
                 'sistema_operacional': record.get('sistema_operacional'),
-                'observacao': record.get('observacoes')
+                'observacao': record.get('observacao')
             }
 
-            # Monta o comando INSERT
-            valid_keys = [k for k, v in machine_record.items() if v is not None]
-            columns = ', '.join(f"`{k}`" for k in valid_keys)
-            values = ', '.join(f"'{str(v).replace("'", "''")}'" for v in [machine_record[k] for k in valid_keys])
+            # Filtra chaves com valores nulos e formata para SQL
+            cols = [f"`{k}`" for k, v in values.items() if v is not None]
+            vals = [f"'{str(v).replace("'", "''")}'" if isinstance(v, str) else str(v) for k, v in values.items() if v is not None]
 
-            if columns:
-                f.write(f"INSERT INTO `machines` ({columns}) VALUES ({values});\n")
+            if not cols:
+                continue
+
+            f.write(f"INSERT INTO `machines` ({', '.join(cols)}) VALUES ({', '.join(vals)}); \n")
 
 if __name__ == "__main__":
     parsed_records = parse_data(raw_data)
