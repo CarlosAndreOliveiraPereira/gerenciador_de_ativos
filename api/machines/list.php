@@ -1,39 +1,41 @@
 <?php
-session_start();
-require_once '../config/database.php';
 
-header('Content-Type: application/json');
+declare(strict_types=1);
 
-// Protege o endpoint, garantindo que apenas usuários autenticados possam acessá-lo
-if (!isset($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo json_encode(['error' => 'Acesso não autorizado.']);
-    exit;
-}
+require_once __DIR__ . '/../bootstrap.php';
 
-// Obtém o termo de busca (se houver)
-$searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
+$userId = require_auth();
+$search = trim($_GET['search'] ?? '');
 
 try {
-    if (!empty($searchTerm)) {
+    if ($search !== '') {
         $stmt = $pdo->prepare(
-            "SELECT id, nome_dispositivo, setor, responsavel FROM machines
-             WHERE nome_dispositivo LIKE :term
-             OR setor LIKE :term
-             OR responsavel LIKE :term"
+            'SELECT id, nome_dispositivo, setor, responsavel
+             FROM machines
+             WHERE user_id = :user_id
+               AND (
+                    nome_dispositivo LIKE :term OR
+                    setor LIKE :term OR
+                    responsavel LIKE :term
+               )
+             ORDER BY nome_dispositivo ASC'
         );
-        $stmt->bindValue(':term', '%' . $searchTerm . '%', PDO::PARAM_STR);
+        $stmt->bindValue(':term', sanitize_like($search), PDO::PARAM_STR);
     } else {
-        $stmt = $pdo->prepare("SELECT id, nome_dispositivo, setor, responsavel FROM machines LIMIT 100"); // Limita a 100 registros por padrão
+        $stmt = $pdo->prepare(
+            'SELECT id, nome_dispositivo, setor, responsavel
+             FROM machines
+             WHERE user_id = :user_id
+             ORDER BY id DESC
+             LIMIT 100'
+        );
     }
 
+    $stmt->bindValue(':user_id', $userId, PDO::PARAM_INT);
     $stmt->execute();
-    $machines = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $machines = $stmt->fetchAll();
 
-    echo json_encode($machines);
-
-} catch (PDOException $e) {
-    http_response_code(500);
-    echo json_encode(['error' => 'Erro ao buscar os ativos no banco de dados.']);
+    echo json_encode($machines, JSON_UNESCAPED_UNICODE);
+} catch (PDOException $exception) {
+    respond_error('Não foi possível carregar a lista de ativos.', 500);
 }
-?>

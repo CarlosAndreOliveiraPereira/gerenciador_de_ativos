@@ -1,83 +1,104 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const editMachineForm = document.getElementById('edit-machine-form');
-    const API_BASE_URL = '../api/machines/';
+    const form = document.getElementById('edit-machine-form');
+    const feedback = document.getElementById('edit-feedback');
+    const deleteButton = document.getElementById('delete-button');
+    const backLink = document.getElementById('back-to-detail');
 
-    if (editMachineForm) {
-        const urlParams = new URLSearchParams(window.location.search);
-        const machineId = urlParams.get('id');
+    if (!form) return;
 
-        if (!machineId) {
-            window.location.href = 'dashboard.html';
+    const machineId = AssetManager.getQueryParam('id');
+    if (!machineId) {
+        AssetManager.setFeedback(feedback, 'ID do ativo não informado.', 'error');
+        form.querySelectorAll('input, textarea, select, button').forEach((el) => {
+            el.disabled = true;
+        });
+        return;
+    }
+
+    backLink?.setAttribute('href', `machine.html?id=${encodeURIComponent(machineId)}`);
+    document.getElementById('machine-id').value = machineId;
+
+    async function loadMachine() {
+        try {
+            const response = await AssetManager.request(`machines/get.php?id=${encodeURIComponent(machineId)}`);
+            if (!response?.data) {
+                throw new Error('Ativo não encontrado.');
+            }
+            const machine = response.data;
+            form.localidade.value = machine.localidade ?? '';
+            form.nome_dispositivo.value = machine.nome_dispositivo ?? '';
+            form.numero_serie.value = machine.numero_serie ?? '';
+            form.nota_fiscal.value = machine.nota_fiscal ?? '';
+            form.responsavel.value = machine.responsavel ?? '';
+            form.email_responsavel.value = machine.email_responsavel ?? '';
+            form.setor.value = machine.setor ?? '';
+            form.windows_update_ativo.value = machine.windows_update_ativo ?? 'Sim';
+            form.sistema_operacional.value = machine.sistema_operacional ?? '';
+            form.observacao.value = machine.observacao ?? '';
+        } catch (error) {
+            AssetManager.setFeedback(feedback, error.message || 'Não foi possível carregar o ativo.', 'error');
+            if (error.status === 401) {
+                window.location.href = 'login.html';
+            }
+        }
+    }
+
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const data = {
+            id: machineId,
+            localidade: form.localidade.value.trim(),
+            nome_dispositivo: form.nome_dispositivo.value.trim(),
+            numero_serie: form.numero_serie.value.trim(),
+            nota_fiscal: form.nota_fiscal.value.trim(),
+            responsavel: form.responsavel.value.trim(),
+            email_responsavel: form.email_responsavel.value.trim(),
+            setor: form.setor.value.trim(),
+            windows_update_ativo: form.windows_update_ativo.value,
+            sistema_operacional: form.sistema_operacional.value.trim(),
+            observacao: form.observacao.value.trim(),
+        };
+
+        AssetManager.setFeedback(feedback, 'Salvando alterações...', 'info');
+
+        try {
+            const response = await AssetManager.request('machines/update.php', {
+                method: 'POST',
+                data,
+            });
+            AssetManager.setFeedback(feedback, response?.message || 'Dados atualizados!', 'success');
+            AssetManager.showToast({ title: 'Ativo atualizado' });
+        } catch (error) {
+            if (error.status === 401) {
+                window.location.href = 'login.html';
+                return;
+            }
+            AssetManager.setFeedback(feedback, error.message || 'Não foi possível atualizar o ativo.', 'error');
+        }
+    });
+
+    deleteButton?.addEventListener('click', async () => {
+        if (!window.confirm('Tem certeza que deseja excluir este ativo? Essa ação não pode ser desfeita.')) {
             return;
         }
 
-        // Populates the form with the machine's existing data
-        const populateEditForm = async () => {
-            try {
-                const response = await fetch(API_BASE_URL + 'read.php');
-                const result = await response.json();
+        AssetManager.setFeedback(feedback, 'Excluindo ativo...', 'info');
 
-                if (result.success) {
-                    const machine = result.machines.find(m => m.id == machineId);
-                    if (machine) {
-                        document.getElementById('machine-id').value = machine.id;
-                        document.getElementById('localidade').value = machine.localidade || '';
-                        document.getElementById('nome_dispositivo').value = machine.nome_dispositivo || '';
-                        document.getElementById('numero_serie').value = machine.numero_serie || '';
-                        document.getElementById('nota_fiscal').value = machine.nota_fiscal || '';
-                        document.getElementById('responsavel').value = machine.responsavel || '';
-                        document.getElementById('email_responsavel').value = machine.email_responsavel || '';
-                        document.getElementById('setor').value = machine.setor || '';
-                        document.getElementById('windows_update_ativo').value = machine.windows_update_ativo || '';
-                        document.getElementById('sistema_operacional').value = machine.sistema_operacional || '';
-                        document.getElementById('observacao').value = machine.observacao || '';
-                    } else {
-                        showMessage('Máquina não encontrada.', false);
-                        setTimeout(() => window.location.href = 'dashboard.html', 1500);
-                    }
-                } else {
-                     window.location.href = 'login.html'; // Auth error
-                }
-            } catch (error) {
-                 showMessage('Erro ao carregar dados da máquina.', false);
+        try {
+            const response = await AssetManager.request('machines/delete.php', {
+                method: 'POST',
+                data: { id: machineId },
+            });
+            AssetManager.showToast({ title: 'Ativo removido', description: response?.message });
+            window.location.href = 'dashboard.html';
+        } catch (error) {
+            if (error.status === 401) {
+                window.location.href = 'login.html';
+                return;
             }
-        };
+            AssetManager.setFeedback(feedback, error.message || 'Erro ao remover o ativo.', 'error');
+        }
+    });
 
-        populateEditForm();
-
-        // Handles the form submission
-        editMachineForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const data = {
-                id: document.getElementById('machine-id').value,
-                localidade: document.getElementById('localidade').value,
-                nome_dispositivo: document.getElementById('nome_dispositivo').value,
-                numero_serie: document.getElementById('numero_serie').value,
-                nota_fiscal: document.getElementById('nota_fiscal').value,
-                responsavel: document.getElementById('responsavel').value,
-                email_responsavel: document.getElementById('email_responsavel').value,
-                setor: document.getElementById('setor').value,
-                windows_update_ativo: document.getElementById('windows_update_ativo').value,
-                sistema_operacional: document.getElementById('sistema_operacional').value,
-                observacao: document.getElementById('observacao').value
-            };
-
-            try {
-                const response = await fetch(API_BASE_URL + 'update.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                const result = await response.json();
-                showMessage(result.message, result.success);
-
-                if (result.success) {
-                    setTimeout(() => window.location.href = 'dashboard.html', 1500);
-                }
-            } catch (error) {
-                showMessage('Ocorreu um erro de conexão. Tente novamente.', false);
-            }
-        });
-    }
+    loadMachine();
 });

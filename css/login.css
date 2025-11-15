@@ -1,41 +1,64 @@
-/* === Login Page Specific Styles === */
-.container {
-    max-width: 450px;
-    background-color: var(--container-bg);
-    padding: 2.5rem;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    box-shadow: var(--shadow);
-}
-
-h1 {
-    font-size: 2rem;
-    margin-bottom: 1.5rem;
+.auth-page .page-content {
+    align-items: center;
     text-align: center;
 }
 
-form {
+.auth-intro {
+    max-width: 540px;
+    display: grid;
+    gap: 0.85rem;
+}
+
+.auth-intro p {
+    margin: 0;
+    color: var(--text-secondary);
+    line-height: 1.65;
+}
+
+.auth-actions {
+    display: grid;
+    gap: 0.75rem;
+    justify-items: center;
+}
+
+.auth-actions a {
+    color: var(--brand-accent);
+    font-weight: 600;
+}
+
+.auth-remember {
     display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
 }
 
-input[type="email"],
-input[type="password"] {
-    padding: 0.9rem;
-    border: 1px solid var(--border-color);
-    background-color: var(--background-dark);
-    color: var(--text-light);
-    border-radius: 6px;
-    font-size: 1rem;
+.auth-remember label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
 }
 
-p {
-    text-align: center;
-    margin-top: 1.5rem;
+.auth-remember input[type="checkbox"] {
+    width: 1.1rem;
+    height: 1.1rem;
+    accent-color: var(--brand-accent);
 }
 
-.forgot-password {
-    margin-top: 0.5rem;
-    font-size: 0.9rem;
+.form-card button[type="submit"] {
+    margin-top: 0.25rem;
+}
+
+@media (max-width: 640px) {
+    .auth-intro {
+        text-align: left;
+    }
+
+    .auth-page .page-content {
+        align-items: stretch;
+        text-align: left;
+    }
 }

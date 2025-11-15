@@ -1,47 +1,61 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AssetManager - Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="api-base" content="../api">
+    <title>AssetManager | Dashboard</title>
     <link rel="stylesheet" href="../css/base.css">
     <link rel="stylesheet" href="../css/header.css">
     <link rel="stylesheet" href="../css/dashboard.css">
 </head>
 <body>
-    <header class="app-header">
-        <img src="../img/logo mysa branco@300x.png" alt="Logo MYSA" class="logo">
-        <div class="user-info">
-            <span id="user-name"></span>
-            <button id="logout-button">Sair</button>
-        </div>
-    </header>
-    <div class="container">
-        <h1>Dashboard</h1>
-        <p>Bem-vindo ao painel de gerenciamento de ativos.</p>
-
-        <div class="search-container">
-            <input type="text" id="search-input" placeholder="Buscar por nome, setor ou responsável...">
-            <button id="search-button">Buscar</button>
-        </div>
-
-        <div class="table-container">
-            <table id="machines-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Dispositivo</th>
-                        <th>Setor</th>
-                        <th>Responsável</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="machines-tbody">
-                    <!-- Linhas da tabela serão inseridas aqui via JavaScript -->
-                </tbody>
-            </table>
-        </div>
+    <div class="page dashboard-page">
+        <header class="app-header">
+            <a href="../index.html" class="logo-link" aria-label="AssetManager">
+                <img src="../img/logo mysa amarelo@300x.png" alt="Logo MYSA" class="logo">
+            </a>
+        </header>
+        <main class="page-content">
+            <section class="dashboard-hero">
+                <h1 class="page-title" id="user-name">Olá!</h1>
+                <p class="page-subtitle">Monitore os ativos cadastrados, pesquise rapidamente e abra os detalhes em um clique.</p>
+                <div class="dashboard-actions">
+                    <a href="add-machine.html" class="badge">+ Novo cadastro</a>
+                    <button type="button" id="logout-button" class="secondary">Sair</button>
+                </div>
+            </section>
+            <section class="card table-card dashboard-table">
+                <div class="toolbar">
+                    <div class="toolbar-search">
+                        <label class="sr-only" for="search-input">Buscar ativo</label>
+                        <input id="search-input" type="search" placeholder="Buscar por nome, setor ou responsável" autocomplete="off">
+                        <button type="button" id="search-button">Buscar</button>
+                    </div>
+                    <button type="button" class="secondary" id="refresh-button">Atualizar</button>
+                </div>
+                <table aria-label="Máquinas cadastradas">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Ativo</th>
+                            <th scope="col">Setor</th>
+                            <th scope="col">Responsável</th>
+                            <th scope="col" class="sr-only">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="machines-tbody">
+                        <tr>
+                            <td colspan="5" class="empty-state">Carregando ativos...</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <footer>Exibindo resultados mais recentes.</footer>
+            </section>
+        </main>
     </div>
+    <div class="toast-root" id="toast-root" aria-live="polite" aria-atomic="false"></div>
+    <script src="../js/utils.js"></script>
     <script src="../js/dashboard.js"></script>
 </body>
 </html>

@@ -1,41 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const requestResetForm = document.getElementById('request-reset-form');
+    const form = document.getElementById('password-reset-request-form');
+    const feedback = document.getElementById('password-reset-feedback');
 
-    if (requestResetForm) {
-        requestResetForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const submitButton = requestResetForm.querySelector('button[type="submit"]');
+    if (!form) return;
 
-            if (!email) {
-                showMessage('Por favor, insira um endereço de e-mail.', false);
-                return;
-            }
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const email = document.getElementById('password-reset-email').value.trim();
 
-            // Desabilitar o botão para evitar múltiplos envios
-            submitButton.disabled = true;
-            submitButton.textContent = 'Enviando...';
+        AssetManager.setFeedback(feedback, 'Enviando instruções...', 'info');
 
-            try {
-                const response = await fetch('../api/auth/request_password_reset.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: email })
-                });
-
-                const result = await response.json();
-
-                // Exibe a mensagem da API, seja de sucesso ou erro.
-                // A mensagem de sucesso incluirá o link de teste.
-                showMessage(result.message, result.success);
-
-            } catch (error) {
-                showMessage('Ocorreu um erro de conexão. Tente novamente.', false);
-            } finally {
-                // Reabilita o botão após a conclusão
-                submitButton.disabled = false;
-                submitButton.textContent = 'Enviar Link de Recuperação';
-            }
-        });
-    }
+        try {
+            const response = await AssetManager.request('auth/request_password_reset.php', {
+                method: 'POST',
+                data: { email },
+            });
+            AssetManager.setFeedback(feedback, response?.message || 'Se existir, enviaremos o link por e-mail.', 'success');
+            AssetManager.showToast({ title: 'Verifique seu e-mail', description: 'Uma mensagem foi enviada com as instruções.' });
+        } catch (error) {
+            AssetManager.setFeedback(feedback, error.message || 'Não foi possível enviar o e-mail.', 'error');
+        }
+    });
 });

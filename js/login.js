@@ -1,47 +1,44 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const loginForm = document.getElementById('login-form');
+    const form = document.getElementById('login-form');
+    const feedback = document.getElementById('login-feedback');
     const emailInput = document.getElementById('login-email');
-    const rememberMeCheckbox = document.getElementById('remember-me');
+    const rememberBox = document.getElementById('remember-me');
 
-    // Preenche o e-mail se estiver salvo no localStorage
-    if (localStorage.getItem('remembered_email')) {
-        emailInput.value = localStorage.getItem('remembered_email');
-        rememberMeCheckbox.checked = true;
+    if (!form) return;
+
+    const rememberedEmail = window.localStorage.getItem('assetmanager:remembered-email');
+    if (rememberedEmail) {
+        emailInput.value = rememberedEmail;
+        rememberBox.checked = true;
     }
 
-    if (loginForm) {
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = emailInput.value;
-            const password = document.getElementById('login-password').value;
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const email = emailInput.value.trim();
+        const password = document.getElementById('login-password').value;
 
-            // Salva ou remove o e-mail do localStorage
-            if (rememberMeCheckbox.checked) {
-                localStorage.setItem('remembered_email', email);
+        AssetManager.setFeedback(feedback, 'Autenticando...', 'info');
+
+        try {
+            const response = await AssetManager.request('auth/login.php', {
+                method: 'POST',
+                data: { email, password },
+            });
+
+            if (rememberBox.checked) {
+                window.localStorage.setItem('assetmanager:remembered-email', email);
             } else {
-                localStorage.removeItem('remembered_email');
+                window.localStorage.removeItem('assetmanager:remembered-email');
             }
 
-            try {
-                const response = await fetch('../api/auth/login.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
-                });
+            AssetManager.setFeedback(feedback, 'Login realizado com sucesso!', 'success');
+            AssetManager.showToast({ title: 'Bem-vindo!', description: response?.message || 'Sessão iniciada.' });
 
-                const result = await response.json();
-
-                if (result.success) {
-                    showMessage('Login bem-sucedido! Redirecionando...', true);
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 1500);
-                } else {
-                    showMessage(result.message, false);
-                }
-            } catch (error) {
-                showMessage('Ocorreu um erro de conexão. Tente novamente.', false);
-            }
-        });
-    }
+            window.setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 600);
+        } catch (error) {
+            AssetManager.setFeedback(feedback, error.message || 'Falha ao entrar.', 'error');
+        }
+    });
 });

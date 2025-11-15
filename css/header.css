@@ -1,23 +1,21 @@
-.main-header {
-    padding: 1.5rem 0;
-    text-align: center;
-    border-bottom: 1px solid var(--border-color);
-    margin-bottom: 2rem;
-}
-
-.logo {
-    max-width: 200px;  /* Ajusta a largura máxima para um tamanho mais adequado */
-    width: 100%;       /* Garante que o logo seja responsivo */
-    height: auto;
-    display: block;
-    margin: 0 auto;
-}
-
+/* Header-specific tweaks leverage the global base styles. */
 .app-header {
-    display: flex;
-    justify-content: space-between;
+    position: sticky;
+    top: clamp(0.5rem, 2vw, 1.5rem);
+    z-index: 20;
+}
+
+.app-header .logo-link {
+    display: inline-flex;
     align-items: center;
-    padding: 1rem 2rem;
-    border-bottom: 1px solid var(--border-color);
-    margin-bottom: 2rem;
+    justify-content: center;
+}
+
+.app-header .logo {
+    transition: transform 180ms ease;
+}
+
+.app-header .logo-link:focus-visible .logo,
+.app-header .logo-link:hover .logo {
+    transform: scale(1.02);
 }

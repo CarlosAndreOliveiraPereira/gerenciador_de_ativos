@@ -1,31 +1,53 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="api-base" content="../api">
+    <title>AssetManager | Login</title>
     <link rel="stylesheet" href="../css/base.css">
     <link rel="stylesheet" href="../css/header.css">
-    <title>AssetManager - Login</title>
     <link rel="stylesheet" href="../css/login.css">
 </head>
 <body>
-    <header class="main-header">
-        <img src="../img/logo mysa branco@300x.png" alt="Logo MYSA" class="logo">
-    </header>
-    <div class="container">
-        <h1>Login</h1>
-        <form id="login-form">
-            <input type="email" id="login-email" placeholder="E-mail" required>
-            <input type="password" id="login-password" placeholder="Senha" required>
-            <div class="remember-me">
-                <input type="checkbox" id="remember-me">
-                <label for="remember-me">Lembrar-me</label>
-            </div>
-            <button type="submit">Entrar</button>
-        </form>
-        <p>Não tem uma conta? <a href="register.html">Cadastre-se</a></p>
-        <div id="message"></div>
+    <div class="page auth-page">
+        <header class="app-header">
+            <a href="../index.html" class="logo-link" aria-label="AssetManager">
+                <img src="../img/logo mysa amarelo@300x.png" alt="Logo MYSA" class="logo">
+            </a>
+        </header>
+        <main class="page-content">
+            <section class="auth-intro">
+                <h1 class="page-title">Bem-vindo de volta</h1>
+                <p>Entre com suas credenciais para retomar o acompanhamento dos seus ativos tecnológicos.</p>
+            </section>
+            <section class="card form-card">
+                <form id="login-form" class="form-grid" autocomplete="on">
+                    <label>
+                        <span class="sr-only">E-mail corporativo</span>
+                        <input type="email" id="login-email" name="email" placeholder="E-mail corporativo" required autocomplete="email">
+                    </label>
+                    <label>
+                        <span class="sr-only">Senha</span>
+                        <input type="password" id="login-password" name="password" placeholder="Senha" required autocomplete="current-password">
+                    </label>
+                    <div class="auth-remember">
+                        <label for="remember-me">
+                            <input type="checkbox" id="remember-me" name="remember"> Lembrar-me
+                        </label>
+                        <a href="request_password_reset.html">Esqueci minha senha</a>
+                    </div>
+                    <button type="submit">Entrar</button>
+                    <div class="form-feedback" id="login-feedback" role="alert" hidden></div>
+                </form>
+                <div class="auth-actions">
+                    <span>Ainda não tem conta?</span>
+                    <a href="register.html">Crie agora mesmo</a>
+                </div>
+            </section>
+        </main>
     </div>
+    <div class="toast-root" id="toast-root" aria-live="polite" aria-atomic="false"></div>
     <script src="../js/utils.js"></script>
     <script src="../js/login.js"></script>
 </body>

@@ -1,28 +1,53 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="api-base" content="../api">
+    <title>AssetManager | Criar conta</title>
     <link rel="stylesheet" href="../css/base.css">
     <link rel="stylesheet" href="../css/header.css">
-    <title>AssetManager - Cadastro</title>
-    <link rel="stylesheet" href="../css/login.css">
+    <link rel="stylesheet" href="../css/register.css">
 </head>
 <body>
-    <header class="main-header">
-        <img src="../img/logo mysa branco@300x.png" alt="Logo MYSA" class="logo">
-    </header>
-    <div class="container">
-        <h1>Cadastro de Usuário</h1>
-        <form id="register-form">
-            <input type="text" id="register-name" placeholder="Nome Completo" required>
-            <input type="email" id="register-email" placeholder="E-mail" required>
-            <input type="password" id="register-password" placeholder="Senha (mínimo 8 caracteres)" required>
-            <button type="submit">Cadastrar</button>
-        </form>
-        <p>Já tem uma conta? <a href="login.html">Faça login</a></p>
-        <div id="message"></div>
+    <div class="page auth-page register">
+        <header class="app-header">
+            <a href="../index.html" class="logo-link" aria-label="AssetManager">
+                <img src="../img/logo mysa amarelo@300x.png" alt="Logo MYSA" class="logo">
+            </a>
+        </header>
+        <main class="page-content register-layout">
+            <section class="register-intro">
+                <h1 class="page-title">Crie sua conta</h1>
+                <p class="page-subtitle">Em poucos passos você terá acesso a todos os recursos do AssetManager.</p>
+                <ul>
+                    <li>Controle os ativos da sua equipe com rapidez.</li>
+                    <li>Mantenha histórico das movimentações e observações.</li>
+                    <li>Compartilhe informações com segurança entre setores.</li>
+                </ul>
+            </section>
+            <section class="card form-card">
+                <form id="register-form" class="form-grid" autocomplete="off">
+                    <label>
+                        <span class="sr-only">Nome completo</span>
+                        <input type="text" id="register-name" name="name" placeholder="Nome completo" minlength="2" required autocomplete="name">
+                    </label>
+                    <label>
+                        <span class="sr-only">E-mail corporativo</span>
+                        <input type="email" id="register-email" name="email" placeholder="E-mail corporativo" required autocomplete="email">
+                    </label>
+                    <label>
+                        <span class="sr-only">Senha</span>
+                        <input type="password" id="register-password" name="password" placeholder="Senha (mínimo de 8 caracteres)" minlength="8" required autocomplete="new-password">
+                    </label>
+                    <button type="submit">Criar conta</button>
+                    <div class="form-feedback" id="register-feedback" role="alert" hidden></div>
+                </form>
+                <p class="register-footnote">Já possui cadastro? <a href="login.html">Entre agora mesmo</a>.</p>
+            </section>
+        </main>
     </div>
+    <div class="toast-root" id="toast-root" aria-live="polite" aria-atomic="false"></div>
     <script src="../js/utils.js"></script>
     <script src="../js/register.js"></script>
 </body>

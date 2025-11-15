@@ -1,40 +1,55 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="api-base" content="../api">
+    <title>AssetManager | Editar máquina</title>
     <link rel="stylesheet" href="../css/base.css">
     <link rel="stylesheet" href="../css/header.css">
-    <title>AssetManager - Editar Máquina</title>
     <link rel="stylesheet" href="../css/machine-form.css">
 </head>
 <body>
-    <header class="app-header">
-        <img src="../jules-scratch/verification/logo mysa branco@300x.png" alt="Logo MYSA" class="logo">
-    </header>
-    <div class="container">
-        <h1>Editar Máquina</h1>
-        <form id="edit-machine-form">
-            <input type="hidden" id="machine_id">
-            <input type="text" id="localidade" placeholder="Localidade">
-            <input type="text" id="nome_dispositivo" placeholder="Nome do Dispositivo (Ativo)">
-            <input type="text" id="numero_serie" placeholder="Número de Série">
-            <input type="text" id="nota_fiscal" placeholder="Nota Fiscal (NF)">
-            <input type="text" id="responsavel" placeholder="Responsável">
-            <input type="email" id="email_responsavel" placeholder="E-mail do Responsável">
-            <input type="text" id="setor" placeholder="Setor">
-            <select id="windows_update_ativo">
-                <option value="" disabled selected>Windows Update Ativo?</option>
-                <option value="Sim">Sim</option>
-                <option value="Nao">Não</option>
-            </select>
-            <input type="text" id="sistema_operacional" placeholder="Sistema Operacional">
-            <textarea id="observacao" placeholder="Observação"></textarea>
-            <button type="submit">Salvar Alterações</button>
-        </form>
-        <div id="message"></div>
-        <p><a href="dashboard.html">Voltar para o Dashboard</a></p>
+    <div class="page machine-form-page">
+        <header class="app-header">
+            <a href="dashboard.html" class="logo-link" aria-label="AssetManager">
+                <img src="../img/logo mysa amarelo@300x.png" alt="Logo MYSA" class="logo">
+            </a>
+        </header>
+        <main class="page-content">
+            <section class="machine-form-header">
+                <h1 class="page-title">Editar informações do ativo</h1>
+                <p class="page-subtitle">Atualize os dados sempre que houver movimentações ou manutenção.</p>
+            </section>
+            <section class="card">
+                <form id="edit-machine-form" class="machine-form" autocomplete="off">
+                    <input type="hidden" id="machine-id">
+                    <div class="form-grid two-column">
+                        <input type="text" id="localidade" name="localidade" placeholder="Localidade">
+                        <input type="text" id="nome_dispositivo" name="nome_dispositivo" placeholder="Nome do dispositivo">
+                        <input type="text" id="numero_serie" name="numero_serie" placeholder="Número de série">
+                        <input type="text" id="nota_fiscal" name="nota_fiscal" placeholder="Nota fiscal">
+                        <input type="text" id="responsavel" name="responsavel" placeholder="Responsável">
+                        <input type="email" id="email_responsavel" name="email_responsavel" placeholder="E-mail do responsável">
+                        <input type="text" id="setor" name="setor" placeholder="Setor">
+                        <select id="windows_update_ativo" name="windows_update_ativo">
+                            <option value="Sim">Windows Update ativo</option>
+                            <option value="Nao">Windows Update inativo</option>
+                        </select>
+                        <input type="text" id="sistema_operacional" name="sistema_operacional" placeholder="Sistema operacional">
+                    </div>
+                    <textarea id="observacao" name="observacao" placeholder="Observações gerais"></textarea>
+                    <div class="form-feedback" id="edit-feedback" role="alert" hidden></div>
+                    <div class="form-actions">
+                        <a href="machine.html" id="back-to-detail" class="secondary" role="button">Voltar</a>
+                        <button type="button" id="delete-button" class="danger">Excluir ativo</button>
+                        <button type="submit">Salvar alterações</button>
+                    </div>
+                </form>
+            </section>
+        </main>
     </div>
+    <div class="toast-root" id="toast-root" aria-live="polite" aria-atomic="false"></div>
     <script src="../js/utils.js"></script>
     <script src="../js/edit-machine.js"></script>
 </body>

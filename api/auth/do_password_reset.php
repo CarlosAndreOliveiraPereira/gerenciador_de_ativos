@@ -1,71 +1,49 @@
 <?php
-require_once '../config/database.php';
 
-header('Content-Type: application/json');
+declare(strict_types=1);
 
-function send_json_response($success, $message, $statusCode = 200) {
-    http_response_code($statusCode);
-    echo json_encode(['success' => $success, 'message' => $message]);
-    exit;
+require_once __DIR__ . '/../bootstrap.php';
+
+$data = request_body();
+$token = trim($data['token'] ?? '');
+$password = $data['password'] ?? '';
+$confirm = $data['confirm_password'] ?? '';
+
+if ($token === '' || $password === '' || $confirm === '') {
+    respond_error('Todos os campos são obrigatórios.', 400);
 }
 
-$data = json_decode(file_get_contents('php://input'), true);
-
-// 1. Validação de Entrada
-if (empty($data['token']) || empty($data['password']) || empty($data['confirm_password'])) {
-    send_json_response(false, 'Todos os campos são obrigatórios.', 400);
+if ($password !== $confirm) {
+    respond_error('As senhas não coincidem.', 400);
 }
 
-$token = $data['token'];
-$password = $data['password'];
-$confirm_password = $data['confirm_password'];
-
-if ($password !== $confirm_password) {
-    send_json_response(false, 'As senhas não coincidem.', 400);
+if (mb_strlen($password) < 8) {
+    respond_error('A nova senha deve ter pelo menos 8 caracteres.', 400);
 }
 
-if (strlen($password) < 8) {
-    send_json_response(false, 'A nova senha deve ter pelo menos 8 caracteres.', 400);
-}
-
-// 2. Lógica de Redefinição de Senha
 try {
-    // 2.1. Encontrar o usuário pelo token e verificar a validade
-    $query = "SELECT id, password_reset_expires_at FROM users WHERE password_reset_token = :token";
-    $stmt = $pdo->prepare($query);
-    $stmt->bindParam(':token', $token, PDO::PARAM_STR);
+    $stmt = $pdo->prepare('SELECT id, password_reset_expires_at FROM users WHERE password_reset_token = :token LIMIT 1');
+    $stmt->bindValue(':token', $token, PDO::PARAM_STR);
     $stmt->execute();
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $user = $stmt->fetch();
 
     if (!$user) {
-        send_json_response(false, 'Token de recuperação inválido ou não encontrado.', 404);
+        respond_error('Token de recuperação inválido ou expirado.', 404);
     }
 
-    $now = new DateTime();
-    $expires_at = new DateTime($user['password_reset_expires_at']);
-
-    if ($now > $expires_at) {
-        send_json_response(false, 'O token de recuperação de senha expirou. Por favor, solicite um novo.', 401);
+    $expires = isset($user['password_reset_expires_at']) ? new DateTime($user['password_reset_expires_at']) : null;
+    if ($expires && new DateTime() > $expires) {
+        respond_error('O token de recuperação expirou. Solicite um novo link.', 401);
     }
 
-    // 2.2. Se o token for válido, atualizar a senha e invalidar o token
-    $new_password_hash = password_hash($password, PASSWORD_DEFAULT);
+    $update = $pdo->prepare(
+        'UPDATE users SET password_hash = :password, password_reset_token = NULL, password_reset_expires_at = NULL WHERE id = :id'
+    );
+    $update->bindValue(':password', password_hash($password, PASSWORD_DEFAULT), PDO::PARAM_STR);
+    $update->bindValue(':id', $user['id'], PDO::PARAM_INT);
+    $update->execute();
 
-    $update_query = "UPDATE users SET
-                        password_hash = :password_hash,
-                        password_reset_token = NULL,
-                        password_reset_expires_at = NULL
-                     WHERE id = :id";
-
-    $update_stmt = $pdo->prepare($update_query);
-    $update_stmt->bindParam(':password_hash', $new_password_hash, PDO::PARAM_STR);
-    $update_stmt->bindParam(':id', $user['id'], PDO::PARAM_INT);
-    $update_stmt->execute();
-
-    send_json_response(true, 'Sua senha foi redefinida com sucesso! Você já pode fazer login.');
-
-} catch (Exception $e) {
-    // Para depuração: error_log($e->getMessage());
-    send_json_response(false, 'Ocorreu um erro no servidor ao tentar redefinir a senha.', 500);
+    respond_success('Sua senha foi atualizada com sucesso.');
+} catch (Throwable $exception) {
+    respond_error('Não foi possível redefinir a senha agora.', 500);
 }
-?>
