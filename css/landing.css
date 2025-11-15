@@ -1,75 +1,332 @@
-.landing-page {
-    width: min(960px, 100%);
-    margin: 0 auto;
+.landing-page-wrapper {
+    width: 100%;
+}
+
+.hero {
     display: grid;
-    gap: 2.5rem;
-    padding: clamp(2.5rem, 5vw, 5rem) clamp(1.5rem, 4vw, 4rem);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(2rem, 5vw, 4rem);
+    padding: clamp(2.5rem, 5vw, 5rem);
     border-radius: var(--radius-lg);
-    background: rgba(15, 23, 42, 0.68);
-    border: 1px solid rgba(148, 163, 184, 0.18);
+    background: linear-gradient(155deg, rgba(12, 12, 18, 0.92), rgba(36, 36, 48, 0.78));
+    border: 1px solid rgba(255, 255, 255, 0.06);
     box-shadow: var(--shadow-lg);
-    text-align: center;
+    position: relative;
+    overflow: hidden;
 }
 
-.landing-page h1 {
-    margin: 0;
-    font-size: clamp(2.25rem, 4vw, 3.75rem);
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: -20% 30% auto -10%;
+    height: 340px;
+    background: radial-gradient(circle, rgba(245, 196, 0, 0.18), transparent 65%);
+    pointer-events: none;
 }
 
-.landing-page p {
-    margin: 0 auto;
-    max-width: 620px;
-    color: var(--text-secondary);
-    font-size: clamp(1.05rem, 2vw, 1.25rem);
-    line-height: 1.8;
-}
-
-.landing-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 1rem;
-}
-
-.landing-buttons .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 160px;
-    padding: 0.9rem 1.4rem;
-    border-radius: var(--radius-sm);
-    font-weight: 600;
-    transition: transform var(--transition), box-shadow var(--transition);
-    background: var(--brand-accent);
-    color: #111827;
-    box-shadow: 0 16px 28px rgba(250, 204, 21, 0.28);
-}
-
-.landing-buttons .btn.secondary {
-    background: rgba(148, 163, 184, 0.18);
-    color: var(--text-primary);
-    box-shadow: none;
-}
-
-.landing-buttons .btn:hover,
-.landing-buttons .btn:focus-visible {
-    transform: translateY(-2px);
+.hero-content {
+    display: grid;
+    gap: 1.5rem;
+    position: relative;
+    z-index: 1;
 }
 
 .brand-badge {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    background: rgba(250, 204, 21, 0.16);
-    color: var(--brand-accent);
+    justify-content: center;
+    width: fit-content;
+    padding: 0.45rem 1.1rem;
     border-radius: 999px;
-    padding: 0.35rem 0.85rem;
-    font-size: 0.9rem;
+    background: rgba(245, 196, 0, 0.18);
+    color: var(--brand-accent);
     font-weight: 600;
-    margin: 0 auto;
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
 }
 
-.brand-badge svg {
-    width: 1.1rem;
-    height: 1.1rem;
+.hero h1 {
+    margin: 0;
+    font-size: clamp(2.5rem, 5vw, 3.75rem);
+    line-height: 1.1;
+}
+
+.hero p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: clamp(1.05rem, 2.1vw, 1.3rem);
+    line-height: 1.75;
+    max-width: 40ch;
+}
+
+.hero-highlights {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.85rem;
+}
+
+.hero-highlights li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    color: var(--text-secondary);
+    font-size: 0.98rem;
+}
+
+.hero-highlights li::before {
+    content: "";
+    margin-top: 0.5rem;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--brand-accent);
+    flex-shrink: 0;
+}
+
+.hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+}
+
+.hero-panel {
+    display: grid;
+    gap: 1.25rem;
+    position: relative;
+    z-index: 1;
+    align-content: center;
+}
+
+.hero-glass {
+    padding: 1.75rem;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, rgba(245, 196, 0, 0.12), rgba(255, 255, 255, 0.04));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    display: grid;
+    gap: 0.45rem;
+}
+
+.metric-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.metric-value {
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    color: var(--brand-accent);
+    line-height: 1;
+}
+
+.metric-footnote {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.hero-card {
+    padding: 1.6rem;
+    border-radius: var(--radius-md);
+    background: rgba(17, 17, 24, 0.86);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    box-shadow: var(--shadow-sm);
+    display: grid;
+    gap: 0.8rem;
+}
+
+.hero-card-title {
+    font-weight: 600;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 0.85rem;
+}
+
+.hero-card p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.5rem, 4vw, 2.5rem);
+    margin-top: clamp(2.5rem, 4vw, 3.5rem);
+}
+
+.feature-card {
+    background: rgba(17, 17, 24, 0.82);
+    border-radius: var(--radius-md);
+    padding: clamp(1.75rem, 3vw, 2.25rem);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: var(--shadow-sm);
+    display: grid;
+    gap: 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card::after {
+    content: "";
+    position: absolute;
+    inset: auto -35% -35% auto;
+    width: 160px;
+    height: 160px;
+    background: radial-gradient(circle, rgba(245, 196, 0, 0.2), transparent 70%);
+    opacity: 0;
+    transition: opacity var(--transition), transform var(--transition);
+}
+
+.feature-card:hover::after,
+.feature-card:focus-within::after {
+    opacity: 1;
+    transform: translate(-10%, -10%);
+}
+
+.feature-icon {
+    font-size: 2rem;
+    color: var(--brand-accent);
+}
+
+.feature-card h2 {
+    margin: 0;
+    font-size: 1.35rem;
+}
+
+.feature-card p {
+    margin: 0;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.benefits {
+    margin-top: clamp(3rem, 5vw, 4.5rem);
+    background: linear-gradient(150deg, rgba(17, 17, 24, 0.9), rgba(30, 30, 40, 0.88));
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: var(--shadow-lg);
+    padding: clamp(2.5rem, 5vw, 4rem);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(2rem, 4vw, 3.5rem);
+    align-items: start;
+}
+
+.benefits-content {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.benefits-content h2 {
+    margin: 0;
+    font-size: clamp(2rem, 3.8vw, 2.75rem);
+}
+
+.benefits-content p {
+    margin: 0;
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+.benefits-metrics {
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.1rem;
+}
+
+.benefits-metrics div {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.benefits-metrics dt {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.35rem;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+}
+
+.benefits-metrics dd {
+    margin: 0;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.benefits-panel {
+    display: flex;
+    align-items: stretch;
+}
+
+.cta-card {
+    display: grid;
+    gap: 1rem;
+    background: rgba(245, 196, 0, 0.08);
+    border-radius: var(--radius-md);
+    padding: clamp(1.75rem, 3vw, 2.5rem);
+    border: 1px solid rgba(245, 196, 0, 0.28);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.cta-card h3 {
+    margin: 0;
+    font-size: 1.4rem;
+}
+
+.cta-card p {
+    margin: 0;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.btn.full {
+    width: 100%;
+}
+
+@media (max-width: 1024px) {
+    .hero {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-panel {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+    }
+
+    .hero::before {
+        inset: -25% 15% auto -35%;
+    }
+
+    .features {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .benefits {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .hero {
+        padding: clamp(2rem, 8vw, 3rem);
+    }
+
+    .hero-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn.full {
+        width: 100%;
+    }
 }

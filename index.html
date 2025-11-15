@@ -10,26 +10,103 @@
 </head>
 <body>
     <div class="page landing-page-wrapper">
-        <header class="app-header">
-            <a href="index.html" class="logo-link" aria-label="AssetManager">
-                <img src="./img/logo mysa amarelo@300x.png" alt="Logo MYSA" class="logo">
-            </a>
+        <header class="app-header" id="topo">
+            <div class="nav-container">
+                <a href="index.html" class="logo-link" aria-label="AssetManager">
+                    <img src="./img/logo mysa amarelo@300x.png" alt="Logo MYSA" class="logo">
+                </a>
+                <nav class="nav-links" aria-label="Seções principais">
+                    <a href="#solucao">Solução</a>
+                    <a href="#beneficios">Benefícios</a>
+                    <a href="#contato">Contato</a>
+                </nav>
+                <div class="nav-actions">
+                    <a href="html/register.html" class="btn ghost">Criar conta</a>
+                    <a href="html/login.html" class="btn">Entrar</a>
+                </div>
+            </div>
         </header>
         <main class="page-content">
-            <section class="landing-page">
-                <span class="brand-badge" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="currentColor" role="img"><path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8 8.009 8.009 0 0 1-8 8Zm1-13h-2v6h6v-2h-4Z"></path></svg>
-                    Gestão inteligente de ativos
-                </span>
-                <h1>Uma nova experiência para administrar seus equipamentos</h1>
-                <p>
-                    Cadastre, monitore e acompanhe o ciclo de vida das suas máquinas com uma interface moderna,
-                    responsiva e totalmente pensada para equipes ágeis.
-                </p>
-                <div class="landing-buttons">
-                    <a href="html/login.html" class="btn">Entrar</a>
-                    <a href="html/register.html" class="btn secondary">Criar conta</a>
+            <section class="hero" aria-labelledby="hero-title">
+                <div class="hero-content">
+                    <span class="brand-badge">Gestão sob medida para a MYSA</span>
+                    <h1 id="hero-title">Controle de ativos com o DNA da sua operação</h1>
+                    <p>
+                        Automatize cadastros, acompanhe produtividade em tempo real e entregue relatórios que refletem
+                        a excelência da MYSA. Tudo em uma plataforma fluida, com a identidade preto, amarelo e cinza da
+                        marca.
+                    </p>
+                    <ul class="hero-highlights">
+                        <li>Dashboards inteligentes com indicadores críticos sempre à vista.</li>
+                        <li>Fluxos colaborativos para manutenção, auditoria e compliance.</li>
+                        <li>Experiência responsiva que se adapta ao ritmo da sua equipe.</li>
+                    </ul>
+                    <div class="hero-actions">
+                        <a href="html/register.html" class="btn">Começar agora</a>
+                        <a href="#beneficios" class="btn ghost">Ver mais detalhes</a>
+                    </div>
                 </div>
+                <div class="hero-panel" aria-hidden="true">
+                    <div class="hero-glass">
+                        <span class="metric-label">Tempo médio de resposta</span>
+                        <strong class="metric-value">-32%</strong>
+                        <span class="metric-footnote">Equipes MYSA após adoção do AssetManager</span>
+                    </div>
+                    <div class="hero-card">
+                        <span class="hero-card-title">Inventário vivo</span>
+                        <p>Acompanhe cada ativo por estágio, responsável e localização em segundos.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="features" id="solucao" aria-label="Solução completa">
+                <article class="feature-card">
+                    <span class="feature-icon" aria-hidden="true">&#128421;</span>
+                    <h2>Cadastre sem atrito</h2>
+                    <p>Modelos prontos, importação em massa e validações inteligentes para manter o cadastro impecável.</p>
+                </article>
+                <article class="feature-card">
+                    <span class="feature-icon" aria-hidden="true">&#128200;</span>
+                    <h2>Monitore com precisão</h2>
+                    <p>Alertas preventivos, cronogramas de manutenção e alertas de risco alinhados aos padrões MYSA.</p>
+                </article>
+                <article class="feature-card">
+                    <span class="feature-icon" aria-hidden="true">&#9889;</span>
+                    <h2>Decida com confiança</h2>
+                    <p>Relatórios executivos e análises em um clique para direcionar investimentos estratégicos.</p>
+                </article>
+            </section>
+
+            <section class="benefits" id="beneficios" aria-label="Benefícios em destaque">
+                <div class="benefits-content">
+                    <h2>Escala sem perder a identidade</h2>
+                    <p>
+                        A experiência foi redesenhada do zero para transmitir a força visual da MYSA. A interface combina
+                        superfícies em preto e cinza grafite com detalhes em amarelo vibrante, criando uma jornada fluida
+                        para toda a operação.
+                    </p>
+                    <dl class="benefits-metrics">
+                        <div>
+                            <dt>Integrações nativas</dt>
+                            <dd>ERP, BI e ferramentas de campo sincronizados com poucos cliques.</dd>
+                        </div>
+                        <div>
+                            <dt>Governança reforçada</dt>
+                            <dd>Histórico completo, registros rastreáveis e conformidade garantida.</dd>
+                        </div>
+                        <div>
+                            <dt>Experiência mobile</dt>
+                            <dd>Equipe em campo com acesso seguro a dados atualizados em tempo real.</dd>
+                        </div>
+                    </dl>
+                </div>
+                <aside class="benefits-panel" aria-labelledby="contato">
+                    <div class="cta-card">
+                        <h3 id="contato">Pronto para liderar o próximo ciclo?</h3>
+                        <p>Fale com nosso time e descubra como o AssetManager acelera a gestão dos ativos da MYSA.</p>
+                        <a href="mailto:contato@mysa.com" class="btn full">Agendar conversa</a>
+                    </div>
+                </aside>
             </section>
         </main>
     </div>
