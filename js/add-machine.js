@@ -1,40 +1,51 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const addMachineForm = document.getElementById('add-machine-form');
-    const API_BASE_URL = '../api/machines/';
+    const form = document.getElementById('add-machine-form');
+    const feedback = document.getElementById('machine-feedback');
 
-    if (addMachineForm) {
-        addMachineForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
+    if (!form) return;
 
-            // Coleta os dados de todos os novos campos do formulário
-            const data = {
-                localidade: document.getElementById('localidade').value,
-                nome_dispositivo: document.getElementById('nome_dispositivo').value,
-                numero_serie: document.getElementById('numero_serie').value,
-                nota_fiscal: document.getElementById('nota_fiscal').value,
-                responsavel: document.getElementById('responsavel').value,
-                email_responsavel: document.getElementById('email_responsavel').value,
-                setor: document.getElementById('setor').value,
-                windows_update_ativo: document.getElementById('windows_update_ativo').value,
-                sistema_operacional: document.getElementById('sistema_operacional').value,
-                observacao: document.getElementById('observacao').value
-            };
+    AssetManager.request('auth/session.php').catch(() => {
+        window.location.href = 'login.html';
+    });
 
-            try {
-                const response = await fetch(API_BASE_URL + 'create.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                const result = await response.json();
-                showMessage(result.message, result.success);
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
 
-                if (result.success) {
-                    setTimeout(() => window.location.href = 'dashboard.html', 1500);
-                }
-            } catch (error) {
-                showMessage('Ocorreu um erro de conexão. Tente novamente.', false);
+        const data = {
+            localidade: document.getElementById('localidade').value.trim(),
+            nome_dispositivo: document.getElementById('nome_dispositivo').value.trim(),
+            numero_serie: document.getElementById('numero_serie').value.trim(),
+            nota_fiscal: document.getElementById('nota_fiscal').value.trim(),
+            responsavel: document.getElementById('responsavel').value.trim(),
+            email_responsavel: document.getElementById('email_responsavel').value.trim(),
+            setor: document.getElementById('setor').value.trim(),
+            windows_update_ativo: document.getElementById('windows_update_ativo').value,
+            sistema_operacional: document.getElementById('sistema_operacional').value.trim(),
+            observacao: document.getElementById('observacao').value.trim(),
+        };
+
+        AssetManager.setFeedback(feedback, 'Salvando ativo...', 'info');
+
+        try {
+            const response = await AssetManager.request('machines/create.php', {
+                method: 'POST',
+                data,
+            });
+
+            AssetManager.setFeedback(feedback, response?.message || 'Ativo cadastrado!', 'success');
+            AssetManager.showToast({
+                title: 'Cadastro realizado',
+                description: 'O ativo foi adicionado ao inventário.',
+            });
+
+            form.reset();
+            document.getElementById('windows_update_ativo').selectedIndex = 0;
+        } catch (error) {
+            if (error.status === 401) {
+                window.location.href = 'login.html';
+                return;
             }
-        });
-    }
+            AssetManager.setFeedback(feedback, error.message || 'Erro ao salvar ativo.', 'error');
+        }
+    });
 });

@@ -3,86 +3,92 @@ document.addEventListener('DOMContentLoaded', () => {
     const logoutButton = document.getElementById('logout-button');
     const searchInput = document.getElementById('search-input');
     const searchButton = document.getElementById('search-button');
+    const refreshButton = document.getElementById('refresh-button');
     const machinesTbody = document.getElementById('machines-tbody');
 
-    // Função para buscar os dados da sessão e atualizar a UI
-    async function fetchSession() {
-        try {
-            const response = await fetch('../api/auth/session.php');
-            const result = await response.json();
+    if (!machinesTbody) return;
 
-            if (result.success && result.data.user_name) {
-                userNameElement.textContent = `Olá, ${result.data.user_name}`;
-                fetchMachines(); // Carrega as máquinas após confirmar a sessão
-            } else {
-                window.location.href = 'login.html';
+    async function requireSession() {
+        try {
+            const session = await AssetManager.request('auth/session.php');
+            if (session?.data?.user_name) {
+                userNameElement.textContent = `Olá, ${session.data.user_name}`;
             }
+            return session;
         } catch (error) {
             window.location.href = 'login.html';
+            throw error;
         }
     }
 
-    // Função para buscar e renderizar as máquinas
-    async function fetchMachines(searchTerm = '') {
+    async function loadMachines(search = '') {
+        const query = search ? `?search=${encodeURIComponent(search)}` : '';
+        machinesTbody.innerHTML = `<tr><td colspan="5" class="empty-state">Carregando ativos...</td></tr>`;
+
         try {
-            const response = await fetch(`../api/machines/list.php?search=${encodeURIComponent(searchTerm)}`);
-            const machines = await response.json();
+            const machines = await AssetManager.request(`machines/list.php${query}`);
 
-            machinesTbody.innerHTML = ''; // Limpa a tabela
-
-            if (machines.length > 0) {
-                machines.forEach(machine => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${machine.id}</td>
-                        <td>${machine.nome_dispositivo}</td>
-                        <td>${machine.setor}</td>
-                        <td>${machine.responsavel}</td>
-                        <td><button class="btn-view" data-id="${machine.id}">Ver</button></td>
-                    `;
-                    machinesTbody.appendChild(row);
-                });
-            } else {
-                machinesTbody.innerHTML = '<tr><td colspan="5">Nenhum ativo encontrado.</td></tr>';
+            if (!Array.isArray(machines) || machines.length === 0) {
+                machinesTbody.innerHTML = '<tr><td colspan="5" class="empty-state">Nenhum ativo encontrado.</td></tr>';
+                return;
             }
+
+            machinesTbody.innerHTML = '';
+            machines.forEach((machine) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${machine.id}</td>
+                    <td>${machine.nome_dispositivo || '—'}</td>
+                    <td>${machine.setor || '—'}</td>
+                    <td>${machine.responsavel || '—'}</td>
+                    <td><button type="button" class="secondary" data-id="${machine.id}">Abrir</button></td>
+                `;
+                machinesTbody.appendChild(row);
+            });
         } catch (error) {
-            machinesTbody.innerHTML = '<tr><td colspan="5">Erro ao carregar os ativos.</td></tr>';
+            machinesTbody.innerHTML = `<tr><td colspan="5" class="empty-state">${error.message || 'Erro ao carregar a lista.'}</td></tr>`;
+            if (error.status === 401) {
+                window.location.href = 'login.html';
+            }
         }
     }
 
-    // Função para realizar o logout
     async function handleLogout() {
         try {
-            await fetch('../api/auth/logout.php', { method: 'POST' });
+            await AssetManager.request('auth/logout.php', { method: 'POST' });
+        } catch (error) {
+            // ignorar
         } finally {
             window.location.href = 'login.html';
         }
     }
 
-    // Event Listeners
-    if (logoutButton) {
-        logoutButton.addEventListener('click', handleLogout);
-    }
-
-    if (searchButton) {
-        searchButton.addEventListener('click', () => fetchMachines(searchInput.value));
-    }
-
-    if (searchInput) {
-        searchInput.addEventListener('keyup', (e) => {
-            if (e.key === 'Enter') {
-                fetchMachines(searchInput.value);
+    machinesTbody.addEventListener('click', (event) => {
+        const target = event.target;
+        if (target instanceof HTMLElement && target.matches('button[data-id]')) {
+            const id = target.getAttribute('data-id');
+            if (id) {
+                window.location.href = `machine.html?id=${encodeURIComponent(id)}`;
             }
-        });
-    }
-
-    machinesTbody.addEventListener('click', (e) => {
-        if (e.target.classList.contains('btn-view')) {
-            const machineId = e.target.dataset.id;
-            window.location.href = `machine.html?id=${machineId}`;
         }
     });
 
-    // Busca os dados da sessão ao carregar a página
-    fetchSession();
+    searchButton?.addEventListener('click', () => loadMachines(searchInput.value.trim()));
+
+    searchInput?.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            loadMachines(searchInput.value.trim());
+        }
+    });
+
+    refreshButton?.addEventListener('click', () => {
+        searchInput.value = '';
+        loadMachines();
+        AssetManager.showToast({ title: 'Lista atualizada' });
+    });
+
+    logoutButton?.addEventListener('click', handleLogout);
+
+    requireSession().then(() => loadMachines());
 });

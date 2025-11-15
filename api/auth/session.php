@@ -1,17 +1,17 @@
 <?php
-session_start();
-header('Content-Type: application/json');
 
-if (isset($_SESSION['user_id']) && isset($_SESSION['user_name'])) {
-    echo json_encode([
-        'success' => true,
-        'data' => [
-            'user_id' => $_SESSION['user_id'],
-            'user_name' => $_SESSION['user_name']
-        ]
-    ]);
-} else {
-    http_response_code(401); // Não autorizado
-    echo json_encode(['success' => false, 'message' => 'Nenhuma sessão ativa.']);
+declare(strict_types=1);
+
+require_once __DIR__ . '/../bootstrap.php';
+
+if (!isset($_SESSION['user_id'], $_SESSION['user_name'])) {
+    respond_error('Nenhuma sessão ativa.', 401);
 }
-?>
+
+respond([
+    'success' => true,
+    'data' => [
+        'user_id' => (int) $_SESSION['user_id'],
+        'user_name' => $_SESSION['user_name'],
+    ],
+]);

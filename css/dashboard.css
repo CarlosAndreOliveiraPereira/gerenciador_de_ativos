@@ -1,44 +1,59 @@
-/* Estilos específicos para o cabeçalho da aplicação */
-.app-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 2rem;
-    background-color: var(--primary-color);
-    color: white;
+.dashboard-page .page-content {
+    gap: 1.75rem;
 }
 
-.app-header .logo {
-    max-width: 150px; /* Logo menor para o cabeçalho interno */
+.dashboard-hero {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.dashboard-hero h1 {
     margin: 0;
 }
 
-.user-info {
+.dashboard-hero p {
+    margin: 0;
+    color: var(--text-secondary);
+}
+
+.dashboard-actions {
     display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 1rem;
 }
 
-#user-name {
-    font-weight: bold;
+.dashboard-actions button {
+    flex-shrink: 0;
 }
 
-#logout-button {
-    background-color: var(--accent-color);
-    color: white;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+.dashboard-table footer {
+    padding: 1rem 1.25rem;
+    color: var(--text-secondary);
 }
 
-#logout-button:hover {
-    background-color: #c0392b; /* Um tom mais escuro de vermelho */
+.table-card tbody button {
+    background: rgba(148, 163, 184, 0.14);
+    color: var(--text-secondary);
+    border-radius: var(--radius-sm);
+    padding: 0.5rem 0.75rem;
+    box-shadow: none;
 }
 
-/* Estilos para o container principal do dashboard */
-.container h1 {
-    color: var(--text-color);
-    margin-bottom: 1rem;
+.table-card tbody button:hover,
+.table-card tbody button:focus-visible {
+    background: rgba(148, 163, 184, 0.22);
+    color: var(--text-primary);
+}
+
+@media (max-width: 768px) {
+    .dashboard-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .dashboard-actions button,
+    .toolbar-search {
+        width: 100%;
+    }
 }

@@ -1,38 +1,31 @@
 <?php
-session_start();
-require_once '../config/database.php';
 
-header('Content-Type: application/json');
+declare(strict_types=1);
 
-if (!isset($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo json_encode(['success' => false, 'message' => 'Acesso não autorizado.']);
-    exit;
-}
+require_once __DIR__ . '/../bootstrap.php';
 
-$machineId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$userId = require_auth();
+$id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
-if ($machineId <= 0) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'ID do ativo inválido.']);
-    exit;
+if ($id <= 0) {
+    respond_error('ID do ativo inválido.', 400);
 }
 
 try {
-    $stmt = $pdo->prepare("SELECT * FROM machines WHERE id = :id");
-    $stmt->bindParam(':id', $machineId, PDO::PARAM_INT);
+    $stmt = $pdo->prepare('SELECT * FROM machines WHERE id = :id AND user_id = :user_id LIMIT 1');
+    $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+    $stmt->bindValue(':user_id', $userId, PDO::PARAM_INT);
     $stmt->execute();
+    $machine = $stmt->fetch();
 
-    $machine = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($machine) {
-        echo json_encode(['success' => true, 'data' => $machine]);
-    } else {
-        http_response_code(404);
-        echo json_encode(['success' => false, 'message' => 'Ativo não encontrado.']);
+    if (!$machine) {
+        respond_error('Ativo não encontrado.', 404);
     }
-} catch (PDOException $e) {
-    http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Erro no servidor ao buscar o ativo.']);
+
+    respond([
+        'success' => true,
+        'data' => $machine,
+    ]);
+} catch (PDOException $exception) {
+    respond_error('Não foi possível carregar os dados do ativo.', 500);
 }
-?>

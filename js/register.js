@@ -1,47 +1,35 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const registerForm = document.getElementById('register-form');
+    const form = document.getElementById('register-form');
+    const feedback = document.getElementById('register-feedback');
 
-    if (registerForm) {
-        registerForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
+    if (!form) return;
 
-            const name = document.getElementById('register-name').value;
-            const email = document.getElementById('register-email').value;
-            const password = document.getElementById('register-password').value;
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
 
-            // Validação básica no lado do cliente
-            if (name.length < 2 || !email || password.length < 8) {
-                showMessage('Por favor, preencha todos os campos corretamente.', false);
-                return;
-            }
+        const name = document.getElementById('register-name').value.trim();
+        const email = document.getElementById('register-email').value.trim();
+        const password = document.getElementById('register-password').value;
 
-            const data = { name, email, password };
+        AssetManager.setFeedback(feedback, 'Criando sua conta...', 'info');
 
-            try {
-                const response = await fetch('../api/auth/register.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
+        try {
+            const response = await AssetManager.request('auth/register.php', {
+                method: 'POST',
+                data: { name, email, password },
+            });
 
-                const result = await response.json();
+            AssetManager.setFeedback(feedback, response?.message || 'Conta criada com sucesso!', 'success');
+            AssetManager.showToast({
+                title: 'Cadastro concluído!',
+                description: 'Agora é só acessar com seu e-mail e senha.',
+            });
 
-                if (result.success) {
-                    showMessage(result.message, true);
-                    // Limpa o formulário e redireciona após um curto período
-                    registerForm.reset();
-                    setTimeout(() => {
-                        window.location.href = 'login.html';
-                    }, 2000);
-                } else {
-                    showMessage(result.message, false);
-                }
-
-            } catch (error) {
-                showMessage('Ocorreu um erro de conexão. Tente novamente mais tarde.', false);
-            }
-        });
-    }
+            window.setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 900);
+        } catch (error) {
+            AssetManager.setFeedback(feedback, error.message || 'Não foi possível concluir o cadastro.', 'error');
+        }
+    });
 });

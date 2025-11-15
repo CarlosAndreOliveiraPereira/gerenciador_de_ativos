@@ -1,14 +1,81 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AssetManager - Detalhes do Ativo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="api-base" content="../api">
+    <title>AssetManager | Detalhes do ativo</title>
     <link rel="stylesheet" href="../css/base.css">
     <link rel="stylesheet" href="../css/header.css">
     <link rel="stylesheet" href="../css/machine.css">
 </head>
-<body>
+<body><<<<<<< codex/improve-code-for-professional-and-interactive-design-9coivc
+    <div class="page machine-page">
+        <header class="app-header">
+            <a href="dashboard.html" class="logo-link" aria-label="AssetManager">
+                <img src="../img/logo mysa amarelo@300x.png" alt="Logo MYSA" class="logo">
+            </a>
+        </header>
+        <main class="page-content">
+            <section class="machine-hero">
+                <h1 class="page-title" id="machine-name">Detalhes do ativo</h1>
+                <div class="meta" id="machine-meta">
+                    <span id="machine-sector">Setor não informado</span>
+                    <span id="machine-location">Localidade não informada</span>
+                </div>
+                <div class="actions-row">
+                    <a href="dashboard.html" class="secondary">Voltar ao dashboard</a>
+                    <button type="button" id="edit-machine-button">Editar ativo</button>
+                </div>
+            </section>
+            <section class="machine-cards" id="machine-details">
+                <div class="card">
+                    <div class="machine-card-title">
+                        <h2>Informações principais</h2>
+                        <button type="button" id="copy-summary" class="secondary">Copiar resumo</button>
+                    </div>
+                    <div class="details-grid">
+                        <div class="detail-tile">
+                            <h3>Responsável</h3>
+                            <p id="machine-owner">—</p>
+                        </div>
+                        <div class="detail-tile">
+                            <h3>E-mail do responsável</h3>
+                            <p id="machine-owner-email">—</p>
+                        </div>
+                        <div class="detail-tile">
+                            <h3>Número de série</h3>
+                            <p id="machine-serial">—</p>
+                        </div>
+                        <div class="detail-tile">
+                            <h3>Nota fiscal</h3>
+                            <p id="machine-invoice">—</p>
+                        </div>
+                        <div class="detail-tile">
+                            <h3>Windows Update</h3>
+                            <p id="machine-windows-update">—</p>
+                        </div>
+                        <div class="detail-tile">
+                            <h3>Sistema operacional</h3>
+                            <p id="machine-os">—</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="machine-card-title">
+                        <h2>Observações</h2>
+                    </div>
+                    <div class="note-block" id="machine-notes">Sem observações registradas.</div>
+                </div>
+            </section>
+            <footer class="machine-footer">
+                <span id="machine-updated">Atualizado recentemente.</span>
+                <a href="add-machine.html">Cadastrar outro ativo</a>
+            </footer>
+        </main>
+    </div>
+    <div class="toast-root" id="toast-root" aria-live="polite" aria-atomic="false"></div>
+    <script src="../js/utils.js"></script>
     <header class="app-header">
         <img src="../img/logo mysa branco@300x.png" alt="Logo MYSA" class="logo">
         <div class="user-info">
@@ -69,7 +136,7 @@
         </section>
     </div>
 
-    <div id="toast" role="status" aria-live="assertive" aria-atomic="true"></div>
+    <div id="toast" role="status" aria-live="assertive" aria-atomic="true"></div>>>>>>>> main
     <script src="../js/machine.js"></script>
 </body>
 </html>

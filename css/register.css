@@ -1,9 +1,43 @@
-/* === Register Page Specific Styles === */
-.container {
-    max-width: 450px;
+.auth-page.register .page-content {
+    align-items: stretch;
 }
 
-p {
+.register-intro {
+    display: grid;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+}
+
+.register-intro ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.35rem;
+}
+
+.register-intro li::before {
+    content: "•";
+    color: var(--brand-accent);
+    margin-right: 0.35rem;
+}
+
+.register-footnote {
+    margin: 1rem 0 0;
+    color: var(--text-secondary);
     text-align: center;
-    margin-top: 1.5rem;
+}
+
+.register-footnote a {
+    color: var(--brand-accent);
+    font-weight: 600;
+}
+
+@media (min-width: 820px) {
+    .register-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
+        gap: 2.5rem;
+        align-items: start;
+    }
 }

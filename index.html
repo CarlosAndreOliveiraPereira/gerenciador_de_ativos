@@ -1,22 +1,37 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bem-vindo ao AssetManager</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AssetManager | Controle seus ativos com estilo</title>
     <link rel="stylesheet" href="./css/base.css">
+    <link rel="stylesheet" href="./css/header.css">
     <link rel="stylesheet" href="./css/landing.css">
 </head>
 <body>
-    <div class="container">
-        <div class="landing-page">
-            <h1>Bem-vindo ao AssetManager</h1>
-            <p>A solução completa para gerenciar seus ativos de TI.</p>
-            <div class="landing-buttons">
-                <a href="html/login.html" class="btn">Login</a>
-                <a href="html/register.html" class="btn">Cadastro</a>
-            </div>
-        </div>
+    <div class="page landing-page-wrapper">
+        <header class="app-header">
+            <a href="index.html" class="logo-link" aria-label="AssetManager">
+                <img src="./img/logo mysa amarelo@300x.png" alt="Logo MYSA" class="logo">
+            </a>
+        </header>
+        <main class="page-content">
+            <section class="landing-page">
+                <span class="brand-badge" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="currentColor" role="img"><path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8 8.009 8.009 0 0 1-8 8Zm1-13h-2v6h6v-2h-4Z"></path></svg>
+                    Gestão inteligente de ativos
+                </span>
+                <h1>Uma nova experiência para administrar seus equipamentos</h1>
+                <p>
+                    Cadastre, monitore e acompanhe o ciclo de vida das suas máquinas com uma interface moderna,
+                    responsiva e totalmente pensada para equipes ágeis.
+                </p>
+                <div class="landing-buttons">
+                    <a href="html/login.html" class="btn">Entrar</a>
+                    <a href="html/register.html" class="btn secondary">Criar conta</a>
+                </div>
+            </section>
+        </main>
     </div>
 </body>
 </html>
