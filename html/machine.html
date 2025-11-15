@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="../css/header.css">
     <link rel="stylesheet" href="../css/machine.css">
 </head>
-<body>
+<body><<<<<<< codex/improve-code-for-professional-and-interactive-design-9coivc
     <div class="page machine-page">
         <header class="app-header">
             <a href="dashboard.html" class="logo-link" aria-label="AssetManager">
@@ -76,6 +76,67 @@
     </div>
     <div class="toast-root" id="toast-root" aria-live="polite" aria-atomic="false"></div>
     <script src="../js/utils.js"></script>
+    <header class="app-header">
+        <img src="../img/logo mysa branco@300x.png" alt="Logo MYSA" class="logo">
+        <div class="user-info">
+            <span id="user-name"></span>
+            <button id="logout-button">Sair</button>
+        </div>
+    </header>
+    <div class="container machine-page">
+        <a href="dashboard.html" class="back-link" aria-label="Voltar para o dashboard">
+            ← Voltar ao Dashboard
+        </a>
+
+        <section id="machine-details" class="machine-details">
+            <div class="machine-hero card" aria-live="polite">
+                <div class="hero-image" id="machine-avatar" aria-hidden="true"></div>
+                <div class="hero-content">
+                    <span class="hero-chip" id="machine-sector">Setor não informado</span>
+                    <h1 id="machine-name">Carregando ativo...</h1>
+                    <p class="hero-location" id="machine-location">&nbsp;</p>
+                    <div class="hero-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Responsável</span>
+                            <span class="meta-value" id="machine-responsible">&nbsp;</span>
+                        </div>
+                        <button class="meta-item meta-action" id="machine-email" type="button" disabled>
+                            <span class="meta-label">E-mail</span>
+                            <span class="meta-value">Não informado</span>
+                            <span class="meta-hint">Clique para copiar</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <section class="machine-card card">
+                <div class="tab-controls" role="tablist">
+                    <button class="tab-button active" data-tab="overview" role="tab" aria-selected="true" aria-controls="tab-overview">
+                        Visão Geral
+                    </button>
+                    <button class="tab-button" data-tab="technical" role="tab" aria-selected="false" aria-controls="tab-technical">
+                        Dados Técnicos
+                    </button>
+                </div>
+                <div class="tab-content active" id="tab-overview" role="tabpanel">
+                    <div class="info-grid" id="overview-grid"></div>
+                </div>
+                <div class="tab-content" id="tab-technical" role="tabpanel" aria-hidden="true">
+                    <div class="info-grid" id="technical-grid"></div>
+                </div>
+            </section>
+
+            <section class="notes card" aria-live="polite">
+                <div class="notes-header">
+                    <h2>Observações</h2>
+                    <button class="notes-refresh" id="refresh-notes" type="button">Atualizar visual</button>
+                </div>
+                <p id="machine-notes">Nenhuma observação registrada.</p>
+            </section>
+        </section>
+    </div>
+
+    <div id="toast" role="status" aria-live="assertive" aria-atomic="true"></div>>>>>>>> main
     <script src="../js/machine.js"></script>
 </body>
 </html>

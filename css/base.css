@@ -28,6 +28,14 @@ html {
     font-size: 16px;
     -webkit-font-smoothing: antialiased;
     scroll-behavior: smooth;
+    --background-dark: #1e1e1e;
+    --primary-yellow: #ffc107;
+    --text-light: #e0e0e0;
+    --text-dark: #121212;
+    --border-color: #444;
+    --container-bg: #2a2a2a;
+    --shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    --border-radius: 16px;
 }
 
 body {
